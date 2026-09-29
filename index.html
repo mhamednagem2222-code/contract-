@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX - Web3 Live Trading & AI DAO Component</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" type="text/javascript"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: linear-gradient(135deg, #090514 0%, #150a2a 50%, #08020f 100%);
+            background-attachment: fixed;
+            color: #e2d9ee; 
+        }
+
+        .bg-purple-main { background-color: transparent; }
+        .bg-purple-card { background: rgba(23, 14, 43, 0.85); backdrop-filter: blur(12px); }
+        .bg-purple-input { background-color: #231542; }
+        .border-purple { border-color: #52378c; }
+
+        .text-subtle-purple { color: #d8b4fe; }
+        .text-subtle-gold { color: #facc15; }
+        .text-subtle-dark { color: #cbd5e1; }
+        
+        .border-subtle-gold { border-color: #854d0e; }
+        .border-subtle-purple { border-color: #6b21a8; }
+
+        .btn-buy { background-color: #10b981; }
+        .btn-buy:hover { background-color: #059669; }
+        .btn-sell { background-color: #f43f5e; }
+        .btn-sell:hover { background-color: #e11d48; }
+        
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #090514; }
+        ::-webkit-scrollbar-thumb { background: #52378c; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b21a8; }
+
+        .blockchain-container {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(9,5,20,0.95) 100%);
+            overflow: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid #52378c;
+        }
+
+        .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+            animation: pulseNode 3s infinite ease-in-out;
+        }
+
+        .node-1 { top: 25%; left: 20%; animation-delay: 0s; }
+        .node-2 { top: 60%; left: 45%; animation-delay: 0.8s; }
+        .node-3 { top: 30%; left: 75%; animation-delay: 1.6s; }
+        .node-4 { top: 75%; left: 80%; animation-delay: 2.2s; }
+
+        @keyframes pulseNode {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #c084fc; }
+        }
+
+        .net-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(168,85,247,0.1), rgba(168,85,247,0.6), rgba(168,85,247,0.1));
+            transform-origin: left center;
+            animation: glowLine 4s infinite linear;
+        }
+
+        @keyframes glowLine {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.3; }
+        }
+
+        .scene-3d {
+            width: 75px;
+            height: 75px;
+            perspective: 600px;
+            margin: 0 auto;
+        }
+
+        .cube-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 6s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            border: 1px solid #a855f7;
+            background: rgba(88, 28, 135, 0.25);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #f3e8ff;
+            box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.3);
+            border-radius: 6px;
+        }
+
+        .cube-face-front  { transform: rotateY(0deg) translateZ(37.5px); }
+        .cube-face-back   { transform: rotateY(180deg) translateZ(37.5px); }
+        .cube-face-right  { transform: rotateY(90deg) translateZ(37.5px); }
+        .cube-face-left   { transform: rotateY(-90deg) translateZ(37.5px); }
+        .cube-face-top    { transform: rotateX(90deg) translateZ(37.5px); }
+        .cube-face-bottom { transform: rotateX(-90deg) translateZ(37.5px); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            50% { transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(0deg); }
+        }
+
+        .usdt-coin {
+            position: absolute;
+            top: -20px;
+            color: #10b981;
+            font-size: 14px;
+            animation: dropCoin 3s infinite linear;
+            opacity: 0.8;
+        }
+
+        @keyframes dropCoin {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(150px) rotate(360deg); opacity: 0; }
+        }
+
+        .ai-pulse-btn {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px #a855f7; }
+            50% { box-shadow: 0 0 18px #a855f7; }
+        }
+
+        .mic-btn-live {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.6) 0%, rgba(45, 10, 80, 0.8) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 52px;
+        }
+        .mic-btn-live:hover {
+            background: linear-gradient(135deg, rgba(126, 34, 206, 0.7) 0%, rgba(76, 29, 149, 0.9) 100%);
+            border-color: #c084fc;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+        }
+        .mic-avatar-ring {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #3b0764 0%, #1e1b4b 100%);
+            border: 2px solid #facc15;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 8px rgba(250, 204, 21, 0.3);
+        }
+        .mic-wave-bars span {
+            display: inline-block;
+            width: 2px;
+            background-color: #10b981;
+            animation: micSoundWave 1.2s infinite ease-in-out;
+        }
+        .mic-wave-bars span:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+        .mic-wave-bars span:nth-child(2) { height: 16px; animation-delay: 0.3s; }
+        .mic-wave-bars span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+
+        @keyframes micSoundWave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(1.2); opacity: 1; }
+        }
+
+        #global-gift-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .gift-anim-container {
+            position: absolute;
+            animation: runAndRoar 4s forwards ease-in-out;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes runAndRoar {
+            0% { transform: translateX(-150vw) scale(0.5); opacity: 0; }
+            40% { transform: translateX(0vw) scale(1.2); opacity: 1; }
+            60% { transform: translateX(0vw) scale(1.3); opacity: 1; filter: drop-shadow(0 0 25px #facc15); }
+            100% { transform: translateX(150vw) scale(0.5); opacity: 0; }
+        }
+
+        .gift-box-square {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #7e22ce 0%, #581c87 100%);
+            border: 1px solid #facc15;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .gift-box-square:hover {
+            transform: translateY(-2px);
+            border-color: #fbbf24;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+            background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%);
+        }
+
+        #gift-modal-overlay, #recipient-modal-overlay, #auth-modal-overlay, #signature-modal-overlay, #settling-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(9, 5, 20, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 99998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .gift-modal-card {
+            background: #170e2b;
+            border: 1px solid #facc15;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 420px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            position: relative;
+        }
+
+        #custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(9, 5, 20, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-purple-main flex justify-center py-2 px-2 sm:px-4 box-border">
+
+    <div id="global-gift-overlay"></div>
+    <audio id="roar-audio" src="https://assets.mixkit.co/active_storage/sfx/972/972-preview.mp3" preload="auto"></audio>
+
+    <div id="custom-alert-overlay">
+        <div class="gift-modal-card text-center max-w-[320px]">
+            <div class="text-subtle-gold text-2xl mb-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <p id="custom-alert-message" class="text-xs text-subtle-purple mb-4 font-bold leading-relaxed"></p>
+            <button onclick="closeCustomAlert()" class="w-full bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold py-2 rounded-lg border border-subtle-purple transition text-xs shadow">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Authorization Modal -->
+    <div id="auth-modal-overlay">
+        <div class="gift-modal-card text-center max-w-[360px]">
+            <div class="text-subtle-gold text-2xl mb-2">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-bold text-sm text-subtle-gold mb-2">Amount Authorization Approval</h3>
+            <p class="text-xs text-subtle-purple mb-4">You have authorized a trading amount of <span id="auth-amount-display" class="text-subtle-gold font-bold font-mono">0</span> USDT. Please sign to proceed with the transaction.</p>
+            <div class="flex gap-2">
+                <button onclick="closeAuthModal()" class="w-1/2 bg-purple-950/60 hover:bg-purple-900/60 text-subtle-dark font-bold py-2 rounded-lg border border-purple transition text-xs">
+                    Cancel
+                </button>
+                <button onclick="confirmAuthAndProceed()" class="w-1/2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold py-2 rounded-lg border border-subtle-purple transition text-xs shadow">
+                    Sign & Authorize
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automatic Signature Modal -->
+    <div id="signature-modal-overlay">
+        <div class="gift-modal-card text-center max-w-[360px]">
+            <div class="text-emerald-400 text-2xl mb-2 animate-bounce">
+                <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <h3 class="font-bold text-sm text-subtle-gold mb-2">Smart Contract Execution Signature</h3>
+            <p class="text-xs text-subtle-purple mb-4">Signature required to initiate and finalize your trade deal securely on the blockchain network.</p>
+            <button onclick="executeFinalDealOnChain()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-lg border border-emerald-400 transition text-xs shadow flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-bolt"></i> Finalize Trade Deal Now
+            </button>
+        </div>
+    </div>
+
+    <!-- Settling / Waiting Modal (Spinning loader awaiting contract result) -->
+    <div id="settling-modal-overlay">
+        <div class="gift-modal-card text-center max-w-[360px]">
+            <div class="text-subtle-gold text-3xl mb-3 animate-spin">
+                <i class="fa-solid fa-circle-notch"></i>
+            </div>
+            <h3 class="font-bold text-sm text-subtle-gold mb-2">Waiting for Smart Contract Settlement</h3>
+            <p class="text-xs text-subtle-purple mb-3">Your trade has been signed and submitted. Awaiting blockchain confirmation and final outcome...</p>
+            <div id="settling-countdown" class="text-sm font-mono font-bold text-emerald-400">00:15</div>
+        </div>
+    </div>
+
+    <div id="gift-modal-overlay">
+        <div class="gift-modal-card">
+            <div class="flex justify-between items-center mb-4 border-b border-purple pb-2">
+                <h3 class="font-bold text-sm text-subtle-gold flex items-center gap-2">
+                    <i class="fa-solid fa-gift"></i> Select & Send Gift
+                </h3>
+                <button onclick="closeGiftModal()" class="text-subtle-dark hover:text-white text-sm font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-5 gap-2.5 max-h-[260px] overflow-y-auto p-1 mb-4">
+                <div onclick="selectGiftFromModal('🦁', 99, 'The King Lion', 'Lion')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🦁</span>
+                    <span class="text-[9px] font-bold text-subtle-gold">$99</span>
+                </div>
+                <div onclick="selectGiftFromModal('✈️', 40, 'Private Jet', 'Jet')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">✈️</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$40</span>
+                </div>
+                <div onclick="selectGiftFromModal('🚢', 250, 'Mega Ship', 'Ship')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🚢</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$250</span>
+                </div>
+                <div onclick="selectGiftFromModal('👑', 150, 'Royal Crown', 'Crown')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">👑</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$150</span>
+                </div>
+                <div onclick="selectGiftFromModal('💎', 500, 'Pure Diamond', 'Diamond')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">💎</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$500</span>
+                </div>
+                <div onclick="selectGiftFromModal('🚀', 300, 'Space Rocket', 'Rocket')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🚀</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$300</span>
+                </div>
+                <div onclick="selectGiftFromModal('🐉', 800, 'Mythic Dragon', 'Dragon')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🐉</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$800</span>
+                </div>
+                <div onclick="selectGiftFromModal('🏎️', 200, 'Supercar', 'Supercar')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🏎️</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$200</span>
+                </div>
+                <div onclick="selectGiftFromModal('🏰', 1000, 'Grand Castle', 'Castle')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🏰</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$1000</span>
+                </div>
+                <div onclick="selectGiftFromModal('🌌', 2000, 'Galaxy Universe', 'Galaxy')" class="gift-box-square cursor-pointer !w-full !h-[60px]">
+                    <span class="text-lg">🌌</span>
+                    <span class="text-[9px] font-bold text-subtle-dark">$2000</span>
+                </div>
+            </div>
+            <div id="selected-gift-preview" class="hidden p-2.5 bg-purple-input rounded-lg border border-subtle-purple mb-3 text-xs text-subtle-purple flex items-center justify-between">
+                <span id="preview-gift-text">Selected: None</span>
+                <span id="preview-gift-price" class="text-subtle-gold font-bold">--</span>
+            </div>
+            <button onclick="proceedToRecipientModal()" class="w-full bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold py-2 rounded-lg border border-subtle-purple transition text-xs shadow">
+                Continue to Send
+            </button>
+        </div>
+    </div>
+
+    <div id="recipient-modal-overlay">
+        <div class="gift-modal-card">
+            <div class="flex justify-between items-center mb-3 border-b border-purple pb-2">
+                <h3 class="font-bold text-sm text-subtle-gold flex items-center gap-2">
+                    <i class="fa-solid fa-wallet"></i> Enter Recipient
+                </h3>
+                <button onclick="closeRecipientModal()" class="text-subtle-dark hover:text-white text-sm font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-subtle-purple mb-3">Enter recipient wallet address or commander name:</p>
+            <input type="text" id="recipient-input-field" value="Commander" class="w-full bg-purple-input border border-purple rounded-lg py-2 px-3 text-subtle-gold font-mono text-sm focus:outline-none focus:border-subtle-purple mb-4">
+            
+            <div class="flex gap-2">
+                <button onclick="closeRecipientModal()" class="w-1/2 bg-purple-950/60 hover:bg-purple-900/60 text-subtle-dark font-bold py-2 rounded-lg border border-purple transition text-xs">
+                    Cancel
+                </button>
+                <button onclick="confirmAndSendGift()" class="w-1/2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold py-2 rounded-lg border border-subtle-purple transition text-xs shadow">
+                    Sign & Send Gift
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-full mx-auto flex flex-col justify-between">
+
+        <div>
+            <section class="w-full bg-purple-card border border-purple rounded-xl overflow-hidden mb-2 shadow-xl">
+                <div class="flex flex-wrap justify-between items-center gap-2 p-2.5 px-3 bg-purple-card border-b border-purple">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1 bg-purple-input p-1 px-2 rounded-lg border border-purple">
+                            <div class="w-6 h-6 rounded-full bg-[#facc15] text-black font-extrabold flex items-center justify-center text-[10px] shadow">
+                                <i class="fa-solid fa-cube"></i>
+                            </div>
+                            <span class="text-xs font-bold text-subtle-dark">/</span>
+                            <div class="w-6 h-6 rounded-full bg-[#10b981] text-white font-extrabold flex items-center justify-center text-[10px] shadow">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-bold text-sm md:text-base leading-none text-subtle-gold">BNB / USDT</h1>
+                                <a href="https://dexscreener.com/bsc/0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869" target="_blank" class="bg-purple-950/40 hover:bg-purple-900/40 text-subtle-purple text-[11px] px-2 py-0.5 rounded border border-subtle-purple transition flex items-center gap-1 font-bold">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> Live Liquidity
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 md:gap-5 text-xs">
+                        <div>
+                            <div class="text-subtle-dark text-[10px]">Live Price</div>
+                            <div id="live-price" class="text-subtle-gold font-bold font-mono">Loading...</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]">Change (24h)</div>
+                            <div id="live-change" class="font-bold font-mono text-subtle-purple">--</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]">Volume (24h)</div>
+                            <div id="live-volume" class="text-subtle-dark font-mono">--</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]">Live Liquidity</div>
+                            <div id="live-liquidity" class="text-subtle-purple font-mono font-bold">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tradingview-widget-container w-full h-[400px] m-0 p-0 block">
+                    <div id="tradingview_chart" class="w-full h-full"></div>
+                </div>
+            </section>
+
+            <main class="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-2">
+                
+                <div class="lg:col-span-3 flex flex-col gap-2">
+                    
+                    <div id="trading-panel-card" class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-sm flex items-center gap-2 text-subtle-purple">
+                                <i class="fa-solid fa-sliders"></i> Live Trading Panel
+                            </h3>
+                            <div class="bg-purple-input px-2.5 py-1 rounded-lg border border-purple text-xs">
+                                <span class="text-subtle-dark">Balance: </span>
+                                <span id="user-display-balance" class="text-subtle-gold font-bold font-mono">Connecting...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs text-subtle-purple font-bold">Amount</label>
+                                    <span class="text-[10px] text-subtle-dark/50 font-bold">1 - 1000 USDT</span>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="trade-amount" min="1" max="1000" value="10" placeholder="10" class="w-full bg-purple-input border border-purple rounded-lg py-1.5 px-3 text-subtle-gold font-mono text-sm focus:outline-none focus:border-subtle-purple">
+                                    <span class="absolute right-3 top-2 text-xs text-subtle-dark font-bold flex items-center gap-1">
+                                        USDT
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-subtle-purple font-bold mb-1">Duration</label>
+                                <select id="trade-duration" class="w-full bg-purple-input border border-purple rounded-lg py-1.5 px-3 text-subtle-purple focus:outline-none focus:border-subtle-purple text-sm">
+                                    <option value="60" class="bg-[#231542] text-[#d8b4fe]">1 Minute</option>
+                                    <option value="300" class="bg-[#231542] text-[#d8b4fe]">5 Minutes</option>
+                                    <option value="600" class="bg-[#231542] text-[#d8b4fe]">10 Minutes</option>
+                                    <option value="1800" class="bg-[#231542] text-[#d8b4fe]">30 Minutes</option>
+                                    <option value="3600" class="bg-[#231542] text-[#d8b4fe]">1 Hour</option>
+                                    <option value="7200" class="bg-[#231542] text-[#d8b4fe]">2 Hours</option>
+                                    <option value="86400" class="bg-[#231542] text-[#d8b4fe]">1 Day</option>
+                                    <option value="172800" class="bg-[#231542] text-[#d8b4fe]">2 Days</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="initiateTradeProcess('BUY')" class="btn-buy text-white font-bold py-2 px-2 rounded-lg flex items-center justify-center gap-1 shadow-lg text-xs transition active:scale-95">
+                                        <i class="fa-solid fa-arrow-trend-up"></i> Instant Buy
+                                    </button>
+                                    <button onclick="initiateTradeProcess('SELL')" class="btn-sell text-white font-bold py-2 px-2 rounded-lg flex items-center justify-center gap-1 shadow-lg text-xs transition active:scale-95">
+                                        <i class="fa-solid fa-arrow-trend-down"></i> Instant Sell
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="error-message" class="hidden text-xs text-red-400 mt-1.5 font-bold text-center"></div>
+                    </div>
+
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xs md:text-sm flex items-center gap-1.5 text-subtle-gold">
+                                <i class="fa-solid fa-clock-rotate-left text-subtle-purple"></i> Instant Trades History
+                            </h3>
+                            <button onclick="syncBlockchain()" class="bg-purple-input hover:bg-purple-900/40 text-subtle-purple text-xs px-2.5 py-1 rounded-lg border border-purple transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate"></i> Refresh Live
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-purple-input text-subtle-purple border-b border-purple">
+                                    <tr>
+                                        <th class="p-2">Type</th>
+                                        <th class="p-2">Amount</th>
+                                        <th class="p-2">Timer</th>
+                                        <th class="p-2">Result</th>
+                                        <th class="p-2">Settlement Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trades-table-body" class="divide-y divide-purple-950/60">
+                                    <tr id="empty-state-row">
+                                        <td colspan="5" class="p-6 text-center text-subtle-dark">
+                                            No active trades currently.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <section class="w-full bg-purple-card border border-purple rounded-xl p-3 shadow-xl relative overflow-hidden">
+                        <div class="flex flex-wrap justify-between items-center gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-900/60 border border-subtle-purple flex items-center justify-center text-subtle-gold text-xl shadow">
+                                    <i class="fa-solid fa-robot"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h2 class="font-bold text-sm md:text-base text-subtle-purple">Global AI Bots Intelligence</h2>
+                                        <span class="bg-amber-950/60 text-amber-400 border border-amber-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold">Launches with DAO in mid-2028</span>
+                                    </div>
+                                    <p class="text-xs text-subtle-dark mt-0.5">Deep intelligent analysis of indicators and patterns to generate well-studied trading signals (divided into 2 daily signals)</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="generateAISignal()" class="ai-pulse-btn bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold text-xs py-2 px-3.5 rounded-lg border border-subtle-purple transition flex items-center gap-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-subtle-gold"></i> Click to generate signal and analysis via Decentralized Contract & Chainlink Data Bots
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="ai-signal-box" class="hidden mt-3 p-3 bg-purple-input rounded-xl border border-subtle-purple text-xs">
+                            <div id="ai-warning-msg" class="hidden mb-2 p-2 bg-red-900/60 border border-red-500 rounded-lg text-red-200 font-bold text-center text-xs">
+                                <i class="fa-solid fa-triangle-exclamation text-red-400 ml-1"></i>
+                                This advanced feature will be launched with the DAO organization in mid-2028 for community voting on decisions and features.
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]">Generated Symbol</span>
+                                    <span id="ai-symbol" class="font-bold text-subtle-gold font-mono text-sm">BNB/USDT</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]">Recommended Direction</span>
+                                    <span id="ai-direction" class="font-bold text-emerald-400 font-mono text-sm">BUY</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]">Study Entry Price</span>
+                                    <span id="ai-entry-price" class="font-bold text-subtle-purple font-mono text-sm">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]">Expected Win/Loss Ratio</span>
+                                    <span id="ai-ratio" class="font-bold text-emerald-400 font-mono text-sm">+85.4% (Studied)</span>
+                                </div>
+                                <div class="col-span-2 md:col-span-1 flex items-center justify-center">
+                                    <button onclick="applyAISignalToTrade()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 px-2 rounded-lg transition text-xs shadow flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-bolt"></i> Enter Trade Now
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-subtle-dark border-t border-purple/40 pt-1.5 flex justify-between items-center">
+                                <span><i class="fa-solid fa-clock"></i> Daily Signal Schedule: <strong class="text-subtle-gold">Signal 1 (09:00 UTC)</strong> | <strong class="text-subtle-gold">Signal 2 (21:00 UTC)</strong></span>
+                                <span id="ai-timestamp" class="text-subtle-purple font-mono">Last Update: Now</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-1">
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-shield-cat text-subtle-gold text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple">Complete Decentralized Protection</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5">All trades are settled automatically via smart contracts without human intervention.</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-bolt-lightning text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple">Lightning-Fast Execution</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5">Real-time price data reading with minimal price slippage via Web3.</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-chart-line text-sky-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple">Chainlink Data Analytics</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5">Direct connection with global oracle networks to ensure data transparency and accuracy.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="blockchain-container p-3 flex flex-col justify-between relative shadow-lg">
+                        <div class="node node-1"></div>
+                        <div class="node node-2"></div>
+                        <div class="node node-3"></div>
+                        <div class="node node-4"></div>
+
+                        <div class="net-line" style="width: 30%; top: 35%; left: 20%; transform: rotate(35deg);"></div>
+                        <div class="net-line" style="width: 35%; top: 45%; left: 45%; transform: rotate(-25deg);"></div>
+                        <div class="net-line" style="width: 25%; top: 68%; left: 55%; transform: rotate(15deg);"></div>
+
+                        <div class="z-10 flex justify-between items-center">
+                            <span class="text-[11px] font-bold text-subtle-purple bg-black/60 px-2.5 py-0.5 rounded-full border border-subtle-purple">
+                                <i class="fa-solid fa-network-wired"></i> Chainlink Oracle & Decentralized Network
+                            </span>
+                            <span id="live-block-num" class="text-[11px] font-mono text-subtle-dark bg-black/60 px-2.5 py-0.5 rounded-full border border-purple-900/40">
+                                Block: #39842019
+                            </span>
+                        </div>
+
+                        <div class="z-10 text-center">
+                            <p class="text-[11px] text-subtle-purple font-medium">
+                                Immediate and direct settlement execution via smart contract without any delays or glitches.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg">
+                        <h3 class="font-bold text-xs mb-2 text-subtle-gold border-b border-purple pb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-pie"></i> Liquidity & Transparency Stats
+                        </h3>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark">Transparency:</span>
+                                <span class="font-bold text-emerald-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-shield-halved"></i> 100% Decentralized
+                                </span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark">Volume (24h):</span>
+                                <span id="side-volume" class="font-mono text-subtle-purple">Loading...</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark">Available Liquidity:</span>
+                                <span id="side-liquidity" class="font-mono text-subtle-gold font-bold">Loading...</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark">Buy Transactions (24h):</span>
+                                <span id="side-buys" class="font-mono text-emerald-400 font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark">Sell Transactions (24h):</span>
+                                <span id="side-sells" class="font-mono text-rose-400 font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between py-0.5">
+                                <span class="text-subtle-dark">Executor:</span>
+                                <span class="font-mono text-subtle-purple">PeetX Smart Contract</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple text-center relative overflow-hidden h-[210px] flex flex-col justify-between shadow-lg">
+                        <h4 class="text-xs font-bold text-subtle-dark">Automatic Contract Settlement</h4>
+                        
+                        <div class="usdt-coin" style="left: 15%; animation-delay: 0s;"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="usdt-coin" style="left: 45%; animation-delay: 1.2s;"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="usdt-coin" style="left: 75%; animation-delay: 2.1s;"><i class="fa-solid fa-dollar-sign"></i></div>
+
+                        <div class="scene-3d my-1">
+                            <div class="cube-3d">
+                                <div class="cube-face cube-face-front">USDT</div>
+                                <div class="cube-face cube-face-back">PeetX</div>
+                                <div class="cube-face cube-face-right"><i class="fa-solid fa-link text-xl"></i></div>
+                                <div class="cube-face cube-face-left"><i class="fa-solid fa-cubes text-xl"></i></div>
+                                <div class="cube-face cube-face-top">Web3</div>
+                                <div class="cube-face cube-face-bottom">BSC</div>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] text-subtle-gold font-mono font-bold z-10 bg-black/60 py-0.5 rounded border border-subtle-gold">Direct synchronized execution without intermediaries</p>
+                    </div>
+
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg flex flex-col justify-between min-h-[420px]">
+                        <div class="border-b border-purple pb-1.5 flex justify-between items-center">
+                            <h3 class="font-bold text-xs text-subtle-gold flex items-center gap-1.5 text-center w-full">
+                                <i class="fa-solid fa-headphones text-subtle-purple"></i> Leaders and members rooms for problem solving and collaboration for all the world
+                            </h3>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        </div>
+
+                        <div class="my-2 p-2.5 bg-purple-input/60 rounded-lg border border-purple/40 flex flex-col gap-2.5">
+                            <div class="grid grid-cols-6 gap-2">
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative overflow-hidden">
+                                        <img src="kkmm.png" alt="Mic Icon" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null; this.src='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/microphone.svg';">
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 1</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 2</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 3</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 4</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 5</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 6</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 7</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 8</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 9</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 10</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 11</span>
+                                </button>
+                                <button onclick="triggerMicAlert()" class="mic-btn-live rounded-lg p-2 text-center flex flex-col items-center justify-center gap-1 group">
+                                    <div class="mic-avatar-ring relative">
+                                        <i class="fa-solid fa-microphone text-xs text-subtle-gold"></i>
+                                        <div class="absolute -bottom-1 -right-1 mic-wave-bars flex items-end gap-[1px]"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-subtle-purple group-hover:text-subtle-gold truncate w-full">Mic 12</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 text-center">
+                            <button onclick="openGiftModal()" class="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-bold py-2 px-3 rounded-lg border border-subtle-gold transition text-xs shadow flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-gift"></i> Send Leader Gift ($99 - $2000)
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "BINANCE:BNBUSDT",
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#170e2b",
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
+            "save_image": false,
+            "container_id": "tradingview_chart",
+            "backgroundColor": "#090514",
+            "gridColor": "rgba(82, 55, 140, 0.15)"
+        });
+
+        let activeTradeType = null;
+        let pendingAmount = 0;
+        let activeTradesList = [];
+
+        function showCustomAlert(msg) {
+            document.getElementById('custom-alert-message').innerText = msg;
+            document.getElementById('custom-alert-overlay').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-overlay').style.display = 'none';
+        }
+
+        function triggerMicAlert() {
+            showCustomAlert("Voice microphone and speaker rooms are active. Connect via Web3 wallet to take a stage slot.");
+        }
+
+        function initiateTradeProcess(type) {
+            const amountInput = document.getElementById('trade-amount');
+            const amt = parseFloat(amountInput.value);
+            const errDiv = document.getElementById('error-message');
+            
+            if (isNaN(amt) || amt < 1 || amt > 1000) {
+                errDiv.innerText = "Please enter a valid trade amount between 1 and 1000 USDT.";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            errDiv.classList.add('hidden');
+            activeTradeType = type;
+            pendingAmount = amt;
+
+            document.getElementById('auth-amount-display').innerText = amt;
+            document.getElementById('auth-modal-overlay').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal-overlay').style.display = 'none';
+        }
+
+        function confirmAuthAndProceed() {
+            document.getElementById('auth-modal-overlay').style.display = 'none';
+            document.getElementById('signature-modal-overlay').style.display = 'flex';
+        }
+
+        function executeFinalDealOnChain() {
+            document.getElementById('signature-modal-overlay').style.display = 'none';
+            
+            // Add trade to active list with pending settlement status
+            const durationSec = parseInt(document.getElementById('trade-duration').value);
+            const newTrade = {
+                id: Date.now(),
+                type: activeTradeType,
+                amount: pendingAmount,
+                duration: durationSec,
+                timeLeft: durationSec,
+                status: 'Settling',
+                result: null
+            };
+            activeTradesList.unshift(newTrade);
+            renderTradesTable();
+
+            // Open settling modal with countdown timer
+            startSettlingTimer(newTrade.id, durationSec);
+        }
+
+        function startSettlingTimer(tradeId, duration) {
+            const settlingModal = document.getElementById('settling-modal-overlay');
+            const countdownEl = document.getElementById('settling-countdown');
+            settlingModal.style.display = 'flex';
+
+            let remaining = Math.min(duration, 15); // Simulated fast settlement countdown or full duration
+            countdownEl.innerText = formatTime(remaining);
+
+            const timerInterval = setInterval(() => {
+                remaining--;
+                countdownEl.innerText = formatTime(remaining);
+
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    settlingModal.style.display = 'none';
+                    
+                    // Determine random win or loss outcome
+                    const isWin = Math.random() >= 0.45;
+                    const trade = activeTradesList.find(t => t.id === tradeId);
+                    if (trade) {
+                        trade.status = 'Completed';
+                        trade.result = isWin ? 'WIN' : 'LOSS';
+                    }
+                    renderTradesTable();
+                    showCustomAlert(isWin ? "🎉 Trade settled successfully: WIN!" : "❌ Trade settled: LOSS.");
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function renderTradesTable() {
+            const tbody = document.getElementById('trades-table-body');
+            if (activeTradesList.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="empty-state-row">
+                        <td colspan="5" class="p-6 text-center text-subtle-dark">
+                            No active trades currently.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            activeTradesList.forEach(t => {
+                const typeClass = t.type === 'BUY' ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+                const resultBadge = t.result === 'WIN' 
+                    ? '<span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-600">WIN (+85%)</span>' 
+                    : t.result === 'LOSS' 
+                    ? '<span class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 font-bold border border-rose-600">LOSS</span>'
+                    : '<span class="text-subtle-dark">Pending</span>';
+                
+                const statusBadge = t.status === 'Settling'
+                    ? '<span class="text-amber-400 animate-pulse font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch animate-spin"></i> Awaiting Contract...</span>'
+                    : '<span class="text-emerald-400 font-bold">Settled on Chain</span>';
+
+                html += `
+                    <tr class="border-b border-purple-950/60 hover:bg-purple-900/20 transition">
+                        <td class="p-2 ${typeClass}"><i class="fa-solid fa-arrow-trend-${t.type === 'BUY' ? 'up' : 'down'}"></i> ${t.type}</td>
+                        <td class="p-2 font-mono text-subtle-gold">${t.amount} USDT</td>
+                        <td class="p-2 font-mono text-subtle-purple">${t.duration}s</td>
+                        <td class="p-2">${resultBadge}</td>
+                        <td class="p-2">${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function syncBlockchain() {
+            renderTradesTable();
+            showCustomAlert("Blockchain connection synchronized successfully.");
+        }
+
+        let selectedGiftEmoji = '';
+        let selectedGiftPrice = 0;
+        let selectedGiftName = '';
+
+        function openGiftModal() {
+            document.getElementById('gift-modal-overlay').style.display = 'flex';
+        }
+
+        function closeGiftModal() {
+            document.getElementById('gift-modal-overlay').style.display = 'none';
+        }
+
+        function selectGiftFromModal(emoji, price, name, code) {
+            selectedGiftEmoji = emoji;
+            selectedGiftPrice = price;
+            selectedGiftName = name;
+            
+            const preview = document.getElementById('selected-gift-preview');
+            preview.classList.remove('hidden');
+            document.getElementById('preview-gift-text').innerText = `Selected: ${emoji} ${name}`;
+            document.getElementById('preview-gift-price').innerText = `$${price} USDT`;
+        }
+
+        function proceedToRecipientModal() {
+            if (!selectedGiftName) {
+                showCustomAlert("Please select a gift first.");
+                return;
+            }
+            document.getElementById('gift-modal-overlay').style.display = 'none';
+            document.getElementById('recipient-modal-overlay').style.display = 'flex';
+        }
+
+        function closeRecipientModal() {
+            document.getElementById('recipient-modal-overlay').style.display = 'none';
+        }
+
+        function confirmAndSendGift() {
+            const recipient = document.getElementById('recipient-input-field').value || 'Commander';
+            document.getElementById('recipient-modal-overlay').style.display = 'none';
+            
+            triggerGlobalGiftAnimation(selectedGiftEmoji, selectedGiftPrice, recipient);
+        }
+
+        function triggerGlobalGiftAnimation(emoji, price, recipient) {
+            const overlay = document.getElementById('global-gift-overlay');
+            const audio = document.getElementById('roar-audio');
+            
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("Audio play blocked", e));
+
+            const container = document.createElement('div');
+            container.className = 'gift-anim-container';
+            container.innerHTML = `
+                <div class="text-6xl mb-1 filter drop-shadow-[0_0_15px_#facc15]">${emoji}</div>
+                <div class="bg-black/80 border border-subtle-gold p-2 px-4 rounded-xl text-subtle-gold font-bold text-xs shadow-2xl">
+                    Sent ${selectedGiftName} ($${price}) to ${recipient}!
+                </div>
+            `;
+            overlay.appendChild(container);
+
+            setTimeout(() => {
+                container.remove();
+            }, 4000);
+        }
+
+        function generateAISignal() {
+            const box = document.getElementById('ai-signal-box');
+            box.classList.remove('hidden');
+            document.getElementById('ai-entry-price').innerText = document.getElementById('live-price').innerText || '$762.50';
+        }
+
+        function applyAISignalToTrade() {
+            initiateTradeProcess('BUY');
+        }
+
+        // Mock Live Data Updater
+        setInterval(() => {
+            const randomPrice = (762 + Math.random() * 2).toFixed(2);
+            document.getElementById('live-price').innerText = `$${randomPrice}`;
+            document.getElementById('live-change').innerText = `+${(2.4 + Math.random()).toFixed(2)}%`;
+            document.getElementById('live-volume').innerText = `$${(482190 + Math.floor(Math.random()*1000)).toLocaleString()}`;
+            document.getElementById('live-liquidity').innerText = `$${(129480 + Math.floor(Math.random()*500)).toLocaleString()}`;
+            document.getElementById('side-volume').innerText = `$${(482190).toLocaleString()}`;
+            document.getElementById('side-liquidity').innerText = `$${(129480).toLocaleString()}`;
+            document.getElementById('side-buys').innerText = Math.floor(1420 + Math.random()*10);
+            document.getElementById('side-sells').innerText = Math.floor(980 + Math.random()*10);
+            document.getElementById('user-display-balance').innerText = "1,540.00 USDT";
+        }, 3000);
+    </script>
+</body>
+</html>
