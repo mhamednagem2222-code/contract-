@@ -1,0 +1,12 @@
+{
+  "name": "peetx-bot",
+  "version": "1.0.0",
+  "description": "Automated smart contract bot for PeetXInvest",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0"
+  }
+}
