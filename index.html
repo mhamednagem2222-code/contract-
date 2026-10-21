@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة مراقبة جميع استثمارات PeetX</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: Tahoma, sans-serif; background: #0b0f19; color: #fff; margin: 0; padding: 15px; }
+        .container { max-width: 650px; margin: auto; background: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: #38bdf8; margin-top: 0; }
+        button { background: #3b82f6; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #2563eb; }
+        .pool-btn { background: #10b981; margin-top: 15px; }
+        .pool-btn:hover { background: #059669; }
+        .card { background: #334155; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #475569; font-size: 13px; }
+        th { color: #94a3b8; }
+        .logs { background: #0f172a; padding: 10px; border-radius: 6px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 11px; margin-top: 15px; color: #38bdf8; text-align: left; direction: ltr; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🚀 مراقبة استثمارات الجميع في PeetX</h2>
+        
+        <button onclick="connectWallet()">🔗 ربط المحفظة بالمتصفح (MetaMask / Trust)</button>
+        
+        <div class="card" id="walletInfo">
+            المحفظة: غير متصل 🔴
+        </div>
+
+        <button class="pool-btn" onclick="runPool()">⚡ تنفيذ دالة Pool يدوياً</button>
+
+        <div class="card">
+            <h3>📋 استثمارات كافة الناس النشطة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>المستثمر</th>
+                        <th>الوقت المتبقي</th>
+                    </tr>
+                </thead>
+                <tbody id="invTable">
+                    <tr><td colspan="3">يرجى ربط المحفظة لبدء الجلب والمراقبة...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>📜 سجلات المراقبة الحية (Logs)</h3>
+        <div class="logs" id="logsBox">
+            [System] جاهز للاتصال وعرض استثمارات الجميع...
+        </div>
+    </div>
+
+    <script>
+        const CONTRACT_ADDRESS = "0x9B3F6B83B07E5B313D960D47938800f0BCce206D";
+        
+        const CONTRACT_ABI = [
+            {"inputs":[],"name":"invCursor","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"invId","type":"uint256"}],"name":"investments","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"address","name":"investor","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"planId","type":"uint256"},{"internalType":"uint256","name":"profitPercent","type":"uint256"},{"internalType":"uint256","name":"startTime","type":"uint256"},{"internalType":"uint256","name":"duration","type":"uint256"},{"internalType":"uint256","name":"totalGenPaid","type":"uint256"},{"internalType":"bool","name":"processed","type":"bool"},{"internalType":"bool","name":"earlyWithdrawn","type":"bool"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"pool","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"string","name":"itemType","type":"string"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bool","name":"success","type":"bool"}],"name":"PoolEvent","type":"event"}
+        ];
+
+        let provider, signer, contract;
+        let allInvestmentsMap = new Map();
+
+        function addLog(text) {
+            const box = document.getElementById('logsBox');
+            box.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${text}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("يرجى فتح الصفحة من متصفح يدعم المحافظ (مثل MetaMask أو Trust Wallet)");
+                return;
+            }
+
+            try {
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                const address = await signer.getAddress();
+                
+                document.getElementById('walletInfo').innerHTML = `المحفظة المتصلة: <span style="color:#4ade80">${address}</span>`;
+                addLog("✅ تم الاتصال بالمحفظة بنجاح!");
+
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+                
+                await fetchAllUsersInvestments();
+                
+                // فحص ومزامنة استثمارات الجميع كل 5 ثوانٍ
+                setInterval(fetchAllUsersInvestments, 5000);
+                
+                // الاستماع للأحداث الحية
+                listenToEvents();
+
+            } catch (err) {
+                addLog("❌ خطأ في الاتصال: " + (err.reason || err.message));
+            }
+        }
+
+        function formatRemainingTime(expiryTime) {
+            const now = Math.floor(Date.now() / 1000);
+            const diff = expiryTime - now;
+            if (diff <= 0) return "منتهٍ وجاهز للتصفية";
+            
+            const days = Math.floor(diff / (3600 * 24));
+            const hours = Math.floor((diff % (3600 * 24)) / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const seconds = diff % 60;
+
+            let parts = [];
+            if (days > 0) parts.push(`${days} يوم`);
+            if (hours > 0) parts.push(`${hours} ساعة`);
+            if (minutes > 0) parts.push(`${minutes} دقيقة`);
+            parts.push(`${seconds} ثانية`);
+            return parts.join(' و ');
+        }
+
+        // جلب استثمارات الجميع عبر invCursor و investments
+        async function fetchAllUsersInvestments() {
+            if (!contract) return;
+            try {
+                const total = Number(await contract.invCursor());
+                if (total === 0) return;
+
+                const start = Math.max(0, total - 50); // فحص آخر 50 استثمار في العقد للجميع
+                let count = 0;
+
+                for (let i = total - 1; i >= start; i--) {
+                    try {
+                        const inv = await contract.investments(i);
+                        if (inv && inv.investor && inv.investor !== ethers.ZeroAddress) {
+                            const invId = inv.id.toString();
+                            const isProcessed = inv.processed;
+                            const isEarlyWithdrawn = inv.earlyWithdrawn;
+
+                            if (isProcessed || isEarlyWithdrawn) {
+                                if (allInvestmentsMap.has(invId)) {
+                                    allInvestmentsMap.delete(invId);
+                                    addLog(`🗑️ الاستثمار #${invId} انسحب أو عولج وتمت إزالته.`);
+                                }
+                                continue;
+                            }
+
+                            const startTime = Number(inv.startTime);
+                            const duration = Number(inv.duration);
+                            const expiryTime = startTime + duration;
+                            const now = Math.floor(Date.now() / 1000);
+
+                            if (now >= expiryTime) {
+                                allInvestmentsMap.delete(invId);
+                                continue;
+                            }
+
+                            allInvestmentsMap.set(invId, {
+                                id: invId,
+                                investor: inv.investor,
+                                expiryTime: expiryTime
+                            });
+                            count++;
+                        }
+                    } catch (err) {}
+                }
+
+                updateTableUI();
+                addLog(`🔄 تم تحديث استثمارات الجميع (النشط حالياً: ${count})`);
+            } catch (e) {
+                addLog("⚠️ خطأ في جلب استثمارات العقد: " + (e.reason || e.message));
+            }
+        }
+
+        function listenToEvents() {
+            try {
+                contract.on("PoolEvent", (id, itemType, user, amount, success) => {
+                    const invId = id.toString();
+                    addLog(`🔔 حدث: ${itemType} للاستثمار #${invId} من ${user.substring(0,6)}...`);
+                    
+                    if (itemType === "EARLY_WITHDRAWAL" || itemType === "INVESTMENT_MATURED") {
+                        allInvestmentsMap.delete(invId);
+                        updateTableUI();
+                    } else if (itemType === "INVESTMENT_CREATED") {
+                        fetchAllUsersInvestments();
+                    }
+                });
+            } catch (e) {}
+        }
+
+        function updateTableUI() {
+            const tbody = document.getElementById('invTable');
+            tbody.innerHTML = "";
+
+            if (allInvestmentsMap.size === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="color: #94a3b8;">لا توجد استثمارات نشطة حالياً للجميع</td></tr>`;
+                return;
+            }
+
+            const now = Math.floor(Date.now() / 1000);
+
+            for (let [invId, data] of allInvestmentsMap.entries()) {
+                if (now >= data.expiryTime) {
+                    allInvestmentsMap.delete(invId);
+                    continue;
+                }
+
+                const remainingStr = formatRemainingTime(data.expiryTime);
+                const shortWallet = data.investor.substring(0, 6) + "..." + data.investor.substring(38);
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>#${invId}</td>
+                        <td style="color: #38bdf8;">${shortWallet}</td>
+                        <td style="color: #4ade80;">${remainingStr}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        // تحديث العداد كل ثانية حياً
+        setInterval(() => {
+            if (allInvestmentsMap.size > 0) {
+                updateTableUI();
+            }
+        }, 1000);
+
+        async function runPool() {
+            if (!contract) {
+                alert("يرجى ربط المحفظة أولاً!");
+                return;
+            }
+            try {
+                addLog("جاري إرسال معاملة pool()...");
+                const tx = await contract.pool();
+                addLog("تم إرسال المعاملة. الهاش: " + tx.hash);
+                await tx.wait();
+                addLog("✅ تم تنفيذ دالة pool بنجاح!");
+                alert("تم تنفيذ دالة pool بنجاح!");
+                await fetchAllUsersInvestments();
+            } catch (err) {
+                addLog("❌ فشل التنفيذ: " + (err.reason || err.message));
+                alert("فشل التنفيذ: " + (err.reason || err.message));
+            }
+        }
+    </script>
+</body>
+</html>
