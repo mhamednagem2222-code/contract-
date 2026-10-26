@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="html-root">
+<head><meta name="google" content="notranslate">
+<title class="notranslate" translate="no">peetx.app web3</title>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Comprehensive Favicon, Web3 Wallet & Social Meta Tags -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <link rel="shortcut icon" type="image/png" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-512x512.png">
+    <link rel="apple-touch-icon-precomposed" href="icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="msapplication-TileImage" content="icon-512x512.png">
+    <meta name="msapplication-TileColor" content="#050508">
+    <meta name="theme-color" content="#050508">
+
+    <meta name="application-name" content="PeetX.app web3">
+    <meta name="apple-mobile-web-app-title" content="PeetX.app web3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://peetx.app">
+    <meta property="og:title" content="PeetX.app web3">
+    <meta property="og:image" content="https://peetx.app/icon-512x512.png">
+    <meta property="og:image:secure_url" content="https://peetx.app/icon-512x512.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://peetx.app">
+    <meta name="twitter:title" content="PeetX.app web3">
+    <meta name="twitter:image" content="https://peetx.app/icon-512x512.png">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+    <!-- Google Translate Official Widget Integration -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <style>
+        :root {
+            --bg-main: #050508;
+            --bg-card: rgba(18, 10, 28, 0.85);
+            --border-color: rgba(139, 92, 246, 0.2);
+            --border-glow: rgba(255, 215, 0, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --accent-cyan: #ffd700;
+            --accent-blue: #a855f7;
+            --accent-purple: #8b5cf6;
+            --accent-green: #00ff88;
+            --accent-red: #ff3b5c;
+            --accent-gold: #ffd700;
+            --primary-gradient: linear-gradient(135deg, #ffd700 0%, #a855f7 50%, #8b5cf6 100%);
+        }
+
+        html, body {
+            top: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overflow: hidden !important;
+            position: relative;
+        }
+
+        body {
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+        }
+
+        body.app-ready {
+            opacity: 1 !important;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Tajawal', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            background: rgba(12, 6, 20, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            z-index: 1000;
+            box-shadow: 0 4px 25px rgba(139, 92, 246, 0.15);
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 8px; }
+        .logo-box img.logo-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+        }
+        .logo-box span { 
+            font-weight: 800; 
+            font-size: 18px; 
+            letter-spacing: 1px; 
+            background: var(--primary-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        
+        .lang-selector-container {
+            position: relative;
+        }
+
+        .globe-icon-btn {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--accent-gold);
+            height: 34px;
+            padding: 0 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .globe-icon-btn img {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .globe-icon-btn i.arrow-icon {
+            font-size: 10px;
+            transition: transform 0.25s ease;
+        }
+
+        .globe-icon-btn.active i.arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        .globe-icon-btn:hover {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .flag-dropdown-panel {
+            display: none;
+            position: absolute;
+            top: 42px;
+            background: rgba(12, 6, 20, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 10px;
+            width: 260px;
+            max-height: 380px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+            z-index: 1002;
+            flex-direction: column;
+            gap: 8px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        html[dir="rtl"] .flag-dropdown-panel { right: 0; left: auto; }
+        html[dir="ltr"] .flag-dropdown-panel { left: 0; right: auto; }
+
+        .flag-dropdown-panel.show { display: flex; }
+
+        .flag-search-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .flag-search-input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .flag-list-scroll {
+            overflow-y: auto;
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-right: 4px;
+        }
+
+        .flag-list-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .flag-list-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .flag-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        .flag-item:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .flag-item img {
+            width: 22px;
+            height: 15px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .btn-action-nav {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 215, 0, 0.15));
+            border: 1px solid var(--border-glow);
+            color: var(--accent-gold);
+            padding: 6px 12px;
+            height: 34px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action-nav:hover { 
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn-action-nav.connected-wallet {
+            border-color: var(--accent-green);
+            color: #ffffff;
+            background: rgba(0, 255, 136, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+        }
+
+        .wallet-menu-container {
+            position: relative;
+        }
+
+        .wallet-arrow-btn {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--border-glow);
+            color: var(--accent-gold);
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .wallet-arrow-btn:hover {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .wallet-arrow-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .wallet-arrow-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        .wallet-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 42px;
+            background: rgba(12, 6, 20, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 10px;
+            width: 200px;
+            max-width: calc(100vw - 28px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+            z-index: 1001;
+            flex-direction: column;
+            gap: 8px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        html[dir="rtl"] .wallet-dropdown-menu { left: 0; right: auto; }
+        html[dir="ltr"] .wallet-dropdown-menu { right: 0; left: auto; }
+
+        .wallet-dropdown-menu.show { display: flex; }
+
+        .wallet-info-text {
+            font-size: 10px;
+            color: var(--accent-gold);
+            font-weight: 700;
+            line-height: 1.4;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .btn-dropdown-copy {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--accent-gold);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+            width: 100%;
+        }
+
+        .btn-dropdown-copy:hover {
+            background: rgba(255, 215, 0, 0.25);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+        
+        .page-section { 
+            display: none; 
+            padding: 0; 
+            margin: 0;
+            width: 100%;
+            height: calc(100vh - 128px); 
+            position: absolute;
+            top: 60px;
+            left: 0;
+        }
+        
+        .page-section.active { display: block; }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            display: block;
+            background: transparent;
+        }
+
+        .nav-bar-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(12, 6, 20, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-color); 
+            display: flex; height: 68px; z-index: 1000;
+            box-shadow: 0 -5px 25px rgba(139, 92, 246, 0.2);
+        }
+
+        .tab-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-secondary); cursor: pointer; gap: 4px; transition: all 0.25s ease;
+        }
+
+        .tab-btn img.nav-custom-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+        }
+
+        .tab-btn span { font-size: 10px; font-weight: 700; text-align: center; }
+        .tab-btn.active { 
+            color: var(--accent-gold); 
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6)); 
+        }
+        .tab-btn.active img.nav-custom-icon {
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+        }
+        
+        #global-entry-loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 5, 8, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .spinner-ring {
+            width: 55px;
+            height: 55px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-top: 3px solid var(--accent-gold);
+            border-right: 3px solid var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-bottom: 16px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        #ui-status-notifier {
+            display: none; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            font-size: 13px; 
+            position: fixed; 
+            top: 70px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 10000; 
+            text-align: center; 
+            font-weight: 800;
+            line-height: 1.4;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85); 
+            width: 90%; 
+            max-width: 420px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .coin-alert-banner {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 450px;
+            background: rgba(139, 92, 246, 0.95);
+            border: 1px solid var(--accent-gold);
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            z-index: 99;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .status-error { 
+            background: rgba(255, 20, 60, 0.98) !important; 
+            border: 2px solid #ff4d6d !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 0 30px rgba(255, 30, 70, 0.6) !important;
+        }
+
+        .status-info { 
+            background: rgba(139, 92, 246, 0.98) !important; 
+            border: 2px solid var(--accent-gold) !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5) !important;
+        }
+
+        .status-success { 
+            background: rgba(0, 230, 118, 0.98) !important; 
+            border: 2px solid #69f0ae !important; 
+            color: #050811 !important; 
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.6) !important;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Absolute Google Translate Suppression for All Browsers */
+        .goog-te-banner-frame,
+        .goog-te-balloon-frame,
+        #goog-gt-tt,
+        #goog-gt-vt,
+        .goog-te-spinner-pos,
+        .goog-te-spinner,
+        .VIpgJd-yD32b-Lg26de,
+        .VIpgJd-yD32b-sA2Bfd,
+        .VIpgJd-yD32b-sA2Bfd-OWX366-Lg26de,
+        .VIpgJd-yD32b-Lg26de-OWX366-sA2Bfd,
+        .VIpgJd-Z4411e-b9f4x,
+        .VIpgJd-Z4411e-O9bGo,
+        .VIpgJd-Z4411e-b9f4x-ah50f-HglA2d,
+        [class*="VIpgJd"],
+        [id*="goog"],
+        iframe[src*="translate"],
+        iframe[id*="goog"],
+        iframe[class*="goog"],
+        .goog-te-gadget-icon,
+        .goog-te-gadget-simple img,
+        .goog-te-gadget-simple {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            max-width: 0 !important;
+            max-height: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+        }
+
+        #google_translate_element {
+            position: fixed !important;
+            left: -9999px !important;
+            top: -9999px !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            z-index: -99999 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .goog-text-highlight,
+        font[style*="background-color"] {
+            background-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="google_translate_element"></div>
+
+    <div id="global-entry-loader">
+        <div class="spinner-ring"></div>
+        <p style="font-size:13px; color:#ffd700; font-weight:700;" id="loader-text">PeetX Connecting Global System...</p>
+    </div>
+
+    <header>
+        <div class="logo-box">
+            <img src="icon-512x512.png" alt="PeetX Logo" class="logo-icon">
+            <span class="no-translate">PeetX</span>
+        </div>
+        <div class="header-actions">
+            <div class="lang-selector-container">
+                <button class="globe-icon-btn" id="country-flag-btn" onclick="toggleFlagMenu()">
+                    <span id="flag-placeholder"><img src="https://flagcdn.com/w40/us.png" alt="US" /></span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+
+                <div class="flag-dropdown-panel" id="flag-dropdown">
+                    <input type="text" class="flag-search-input" id="flag-search" placeholder="Search country / ابحث..." oninput="filterFlags()">
+                    <div class="flag-list-scroll" id="flag-list"></div>
+                </div>
+            </div>
+            
+            <div class="wallet-menu-container" style="display: flex; gap: 4px; align-items: center;">
+                <button class="btn-action-nav" id="btn-wallet-connect" onclick="handleWalletAction()">
+                    <i class="fa-solid fa-wallet"></i> <span id="txt-wallet-btn" class="no-translate">Connect Wallet</span>
+                </button>
+                <button class="wallet-arrow-btn" id="btn-wallet-arrow" style="display: none;" onclick="handleWalletAction()">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+
+                <div class="wallet-dropdown-menu" id="wallet-dropdown">
+                    <div class="wallet-info-text" id="txt-auto-connect-info">
+                        Connection is automated for convenience
+                    </div>
+                    <button class="btn-dropdown-copy" onclick="copyWalletAddress()">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="txt-copy-wallet">Copy Address</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="ui-status-notifier"></div>
+
+    <!-- SECTIONS -->
+    <section class="page-section active" id="section-peetx">
+        <iframe src="PeetX.html" class="content-frame" id="iframe-peetx" title="PeetX Main" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-trade">
+        <iframe src="trading.html" class="content-frame" id="iframe-trade" title="PeetX Trade" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-team">
+        <iframe src="team.html" class="content-frame" id="iframe-team" title="PeetX Team" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-invest">
+        <iframe src="invest.html" class="content-frame" id="iframe-invest" title="PeetX Invest" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-coin">
+        <div class="coin-alert-banner" id="coin-top-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Warning: It has no relation to the main project, used only as another profit source.
+        </div>
+        <iframe src="coin.html" class="content-frame" id="iframe-coin" title="PeetX Coin" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-mining">
+        <div class="coin-alert-banner" id="mining-top-warning" style="display: block;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Mining second profit has no relation to investment, trading or team. Additional profit for the user.
+        </div>
+        <iframe src="nagem1.html" class="content-frame" id="iframe-mining" title="PeetX Mining" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <section class="page-section" id="section-dao">
+        <iframe src="dao.html" class="content-frame" id="iframe-dao" title="PeetX DAO" onload="syncStateWithIframe(this)"></iframe>
+    </section>
+
+    <!-- NAVIGATION FOOTER -->
+    <nav class="nav-bar-footer">
+        <div class="tab-btn active" id="nav-item-peetx" onclick="switchTab('peetx')">
+            <img src="zx1.png" alt="Project" class="nav-custom-icon">
+            <span id="txt-nav-project">Project</span>
+        </div>
+        <div class="tab-btn" id="nav-item-trade" onclick="switchTab('trade')">
+            <img src="zx2.png" alt="Trade" class="nav-custom-icon">
+            <span id="txt-nav-trade">Trade</span>
+        </div>
+        <div class="tab-btn" id="nav-item-team" onclick="switchTab('team')">
+            <img src="zx3.png" alt="Team" class="nav-custom-icon">
+            <span id="txt-nav-team">Team</span>
+        </div>
+        <div class="tab-btn" id="nav-item-invest" onclick="switchTab('invest')">
+            <img src="zx4.png" alt="Invest" class="nav-custom-icon">
+            <span id="txt-nav-invest">Invest</span>
+        </div>
+        <div class="tab-btn" id="nav-item-coin" onclick="switchTab('coin')">
+            <img src="zx5.png" alt="Coin" class="nav-custom-icon">
+            <span id="txt-nav-coin">Coin</span>
+        </div>
+        <div class="tab-btn" id="nav-item-mining" onclick="switchTab('mining')">
+            <img src="zx55.png" alt="Mining" class="nav-custom-icon">
+            <span id="txt-nav-mining">Mining</span>
+        </div>
+        <div class="tab-btn" id="nav-item-dao" onclick="switchTab('dao')">
+            <img src="zx6.png" alt="DAO" class="nav-custom-icon">
+            <span id="txt-nav-dao">DAO</span>
+        </div>
+    </nav>
+
+    <script>
+        let sessionState = { walletConnected: false, walletAddress: null, currentLang: 'en', currentCountry: 'US' };
+
+        const rtlLanguages = ['ar', 'fa', 'ur', 'he'];
+
+        const COUNTRIES_LIST = [
+            {code:"US", flagCode:"us", name:"United States", lang:"en"},{code:"GB", flagCode:"gb", name:"United Kingdom", lang:"en"},
+            {code:"CA", flagCode:"ca", name:"Canada", lang:"en"},{code:"AU", flagCode:"au", name:"Australia", lang:"en"},
+            {code:"DE", flagCode:"de", name:"Germany", lang:"de"},{code:"FR", flagCode:"fr", name:"France", lang:"fr"},
+            {code:"ES", flagCode:"es", name:"Spain", lang:"es"},{code:"IT", flagCode:"it", name:"Italy", lang:"it"},
+            {code:"PT", flagCode:"pt", name:"Portugal", lang:"pt"},{code:"BR", flagCode:"br", name:"Brazil", lang:"pt"},
+            {code:"RU", flagCode:"ru", name:"Russia", lang:"ru"},{code:"CN", flagCode:"cn", name:"China", lang:"zh-CN"},
+            {code:"JP", flagCode:"jp", name:"Japan", lang:"ja"},{code:"KR", flagCode:"kr", name:"South Korea", lang:"ko"},
+            {code:"IN", flagCode:"in", name:"India", lang:"hi"},{code:"PK", flagCode:"pk", name:"Pakistan", lang:"ur"},
+            {code:"TR", flagCode:"tr", name:"Turkey", lang:"tr"},{code:"IR", flagCode:"ir", name:"Iran", lang:"fa"},
+            {code:"NL", flagCode:"nl", name:"Netherlands", lang:"nl"},{code:"SE", flagCode:"se", name:"Sweden", lang:"sv"},
+            {code:"NO", flagCode:"no", name:"Norway", lang:"no"},{code:"FI", flagCode:"fi", name:"Finland", lang:"fi"},
+            {code:"DK", flagCode:"dk", name:"Denmark", lang:"da"},{code:"PL", flagCode:"pl", name:"Poland", lang:"pl"},
+            {code:"UA", flagCode:"ua", name:"Ukraine", lang:"uk"},{code:"ID", flagCode:"id", name:"Indonesia", lang:"id"},
+            {code:"MY", flagCode:"my", name:"Malaysia", lang:"ms"},{code:"TH", flagCode:"th", name:"Thailand", lang:"th"},
+            {code:"VN", flagCode:"vn", name:"Vietnam", lang:"vi"},{code:"PH", flagCode:"ph", name:"Philippines", lang:"tl"},
+            {code:"MX", flagCode:"mx", name:"Mexico", lang:"es"},{code:"AR", flagCode:"ar", name:"Argentina", lang:"es"},
+            {code:"ZA", flagCode:"za", name:"South Africa", lang:"en"},{code:"NG", flagCode:"ng", name:"Nigeria", lang:"en"},
+            {code:"BD", flagCode:"bd", name:"Bangladesh", lang:"bn"},{code:"GR", flagCode:"gr", name:"Greece", lang:"el"},
+            {code:"CZ", flagCode:"cz", name:"Czech Republic", lang:"cs"},{code:"HU", flagCode:"hu", name:"Hungary", lang:"hu"},
+            {code:"RO", flagCode:"ro", name:"Romania", lang:"ro"},{code:"CH", flagCode:"ch", name:"Switzerland", lang:"de"},
+            {code:"AT", flagCode:"at", name:"Austria", lang:"de"},{code:"BE", flagCode:"be", name:"Belgium", lang:"nl"},
+            {code:"NZ", flagCode:"nz", name:"New Zealand", lang:"en"},{code:"SG", flagCode:"sg", name:"Singapore", lang:"en"},
+            {code:"IE", flagCode:"ie", name:"Ireland", lang:"en"},{code:"CL", flagCode:"cl", name:"Chile", lang:"es"},
+            {code:"CO", flagCode:"co", name:"Colombia", lang:"es"},{code:"PE", flagCode:"pe", name:"Peru", lang:"es"},
+            {code:"VE", flagCode:"ve", name:"Venezuela", lang:"es"},{code:"IL", flagCode:"il", name:"Israel", lang:"he"},
+            {code:"KZ", flagCode:"kz", name:"Kazakhstan", lang:"ru"},{code:"UZ", flagCode:"uz", name:"Uzbekistan", lang:"uz"},
+            {code:"AZ", flagCode:"az", name:"Azerbaijan", lang:"az"},{code:"GE", flagCode:"ge", name:"Georgia", lang:"ka"},
+            {code:"AM", flagCode:"am", name:"Armenia", lang:"hy"},{code:"BY", flagCode:"by", name:"Belarus", lang:"be"},
+            {code:"SK", flagCode:"sk", name:"Slovakia", lang:"sk"},{code:"BG", flagCode:"bg", name:"Bulgaria", lang:"bg"},
+            {code:"HR", flagCode:"hr", name:"Croatia", lang:"hr"},{code:"RS", flagCode:"rs", name:"Serbia", lang:"sr"},
+            {code:"SI", flagCode:"si", name:"Slovenia", lang:"sl"},{code:"LT", flagCode:"lt", name:"Lithuania", lang:"lt"},
+            {code:"LV", flagCode:"lv", name:"Latvia", lang:"lv"},{code:"EE", flagCode:"ee", name:"Estonia", lang:"et"},
+            {code:"IS", flagCode:"is", name:"Iceland", lang:"is"},{code:"LU", flagCode:"lu", name:"Luxembourg", lang:"fr"},
+            {code:"MT", flagCode:"mt", name:"Malta", lang:"mt"},{code:"CY", flagCode:"cy", name:"Cyprus", lang:"el"},
+            {code:"AL", flagCode:"al", name:"Albania", lang:"sq"},{code:"MK", flagCode:"mk", name:"North Macedonia", lang:"mk"},
+            {code:"BA", flagCode:"ba", name:"Bosnia & Herzegovina", lang:"bs"},{code:"MD", flagCode:"md", name:"Moldova", lang:"ro"},
+            {code:"ME", flagCode:"me", name:"Montenegro", lang:"sr"},{code:"AF", flagCode:"af", name:"Afghanistan", lang:"fa"},
+            {code:"LK", flagCode:"lk", name:"Sri Lanka", lang:"si"},{code:"NP", flagCode:"np", name:"Nepal", lang:"ne"},
+            {code:"MM", flagCode:"mm", name:"Myanmar", lang:"my"},{code:"KH", flagCode:"kh", name:"Cambodia", lang:"km"},
+            {code:"LA", flagCode:"la", name:"Laos", lang:"lo"},{code:"MN", flagCode:"mn", name:"Mongolia", lang:"mn"},
+            {code:"TW", flagCode:"tw", name:"Taiwan", lang:"zh-TW"},{code:"HK", flagCode:"hk", name:"Hong Kong", lang:"zh-TW"},
+            {code:"KE", flagCode:"ke", name:"Kenya", lang:"sw"},{code:"TZ", flagCode:"tz", name:"Tanzania", lang:"sw"},
+            {code:"UG", flagCode:"ug", name:"Uganda", lang:"sw"},{code:"ET", flagCode:"et", name:"Ethiopia", lang:"am"},
+            {code:"GH", flagCode:"gh", name:"Ghana", lang:"en"},{code:"CI", flagCode:"ci", name:"Ivory Coast", lang:"fr"},
+            {code:"SN", flagCode:"sn", name:"Senegal", lang:"fr"},{code:"CM", flagCode:"cm", name:"Cameroon", lang:"fr"},
+            {code:"AO", flagCode:"ao", name:"Angola", lang:"pt"},{code:"MZ", flagCode:"mz", name:"Mozambique", lang:"pt"},
+            {code:"ZW", flagCode:"zw", name:"Zimbabwe", lang:"en"},{code:"EC", flagCode:"ec", name:"Ecuador", lang:"es"},
+            {code:"GT", flagCode:"gt", name:"Guatemala", lang:"es"},{code:"CU", flagCode:"cu", name:"Cuba", lang:"es"},
+            {code:"BO", flagCode:"bo", name:"Bolivia", lang:"es"},{code:"DO", flagCode:"do", name:"Dominican Rep.", lang:"es"},
+            {code:"HN", flagCode:"hn", name:"Honduras", lang:"es"},{code:"PY", flagCode:"py", name:"Paraguay", lang:"es"},
+            {code:"SV", flagCode:"sv", name:"El Salvador", lang:"es"},{code:"NI", flagCode:"ni", name:"Nicaragua", lang:"es"},
+            {code:"CR", flagCode:"cr", name:"Costa Rica", lang:"es"},{code:"PR", flagCode:"pr", name:"Puerto Rico", lang:"es"},
+            {code:"UY", flagCode:"uy", name:"Uruguay", lang:"es"},{code:"PA", flagCode:"pa", name:"Panama", lang:"es"},
+            {code:"JM", flagCode:"jm", name:"Jamaica", lang:"en"},{code:"HT", flagCode:"ht", name:"Haiti", lang:"ht"},
+            {code:"TJ", flagCode:"tj", name:"Tajikistan", lang:"tg"},{code:"TM", flagCode:"tm", name:"Turkmenistan", lang:"tk"},
+            {code:"KG", flagCode:"kg", name:"Kyrgyzstan", lang:"ky"},{code:"SO", flagCode:"so", name:"Somalia", lang:"so"},
+            {code:"FJ", flagCode:"fj", name:"Fiji", lang:"en"},{code:"PG", flagCode:"pg", name:"Papua New Guinea", lang:"en"},
+            {code:"BW", flagCode:"bw", name:"Botswana", lang:"en"},{code:"NA", flagCode:"na", name:"Namibia", lang:"en"},
+            {code:"RW", flagCode:"rw", name:"Rwanda", lang:"rw"},{code:"GA", flagCode:"ga", name:"Gabon", lang:"fr"},
+            {code:"CG", flagCode:"cg", name:"Congo", lang:"fr"},{code:"CD", flagCode:"cd", name:"DR Congo", lang:"fr"},
+            {code:"MG", flagCode:"mg", name:"Madagascar", lang:"mg"},{code:"AD", flagCode:"ad", name:"Andorra", lang:"ca"},
+            {code:"MC", flagCode:"mc", name:"Monaco", lang:"fr"},{code:"SM", flagCode:"sm", name:"San Marino", lang:"it"},
+            {code:"VA", flagCode:"va", name:"Vatican City", lang:"it"},{code:"LI", flagCode:"li", name:"Liechtenstein", lang:"de"},
+            {code:"BZ", flagCode:"bz", name:"Belize", lang:"en"},{code:"GY", flagCode:"gy", name:"Guyana", lang:"en"},
+            {code:"SR", flagCode:"sr", name:"Suriname", lang:"nl"},{code:"BS", flagCode:"bs", name:"Bahamas", lang:"en"},
+            {code:"BB", flagCode:"bb", name:"Barbados", lang:"en"},{code:"TT", flagCode:"tt", name:"Trinidad & Tobago", lang:"en"},
+            {code:"CV", flagCode:"cv", name:"Cape Verde", lang:"pt"},{code:"ST", flagCode:"st", name:"Sao Tome", lang:"pt"},
+            {code:"GW", flagCode:"gw", name:"Guinea-Bissau", lang:"pt"},{code:"TL", flagCode:"tl", name:"Timor-Leste", lang:"pt"},
+            {code:"GQ", flagCode:"gq", name:"Equatorial Guinea", lang:"es"},{code:"SC", flagCode:"sc", name:"Seychelles", lang:"fr"},
+            {code:"MU", flagCode:"mu", name:"Mauritius", lang:"en"},{code:"AW", flagCode:"aw", name:"Aruba", lang:"nl"},
+            {code:"AG", flagCode:"ag", name:"Antigua and Barbuda", lang:"en"},{code:"AI", flagCode:"ai", name:"Anguilla", lang:"en"},
+            {code:"AS", flagCode:"as", name:"American Samoa", lang:"en"},{code:"BM", flagCode:"bm", name:"Bermuda", lang:"en"},
+            {code:"BT", flagCode:"bt", name:"Bhutan", lang:"dz"},{code:"BI", flagCode:"bi", name:"Burundi", lang:"fr"},
+            {code:"BJ", flagCode:"bj", name:"Benin", lang:"fr"},{code:"BF", flagCode:"bf", name:"Burkina Faso", lang:"fr"},
+            {code:"CF", flagCode:"cf", name:"Central African Rep.", lang:"fr"},{code:"CK", flagCode:"ck", name:"Cook Islands", lang:"en"},
+            {code:"CW", flagCode:"cw", name:"Curaçao", lang:"nl"},{code:"KY", flagCode:"ky", name:"Cayman Islands", lang:"en"},
+            {code:"DM", flagCode:"dm", name:"Dominica", lang:"en"},{code:"ER", flagCode:"er", name:"Eritrea", lang:"ti"},
+            {code:"FM", flagCode:"fm", name:"Micronesia", lang:"en"},{code:"FO", flagCode:"fo", name:"Faroe Islands", lang:"fo"},
+            {code:"GD", flagCode:"gd", name:"Grenada", lang:"en"},{code:"GL", flagCode:"gl", name:"Greenland", lang:"kl"},
+            {code:"GM", flagCode:"gm", name:"Gambia", lang:"en"},{code:"GN", flagCode:"gn", name:"Guinea", lang:"fr"},
+            {code:"GU", flagCode:"gu", name:"Guam", lang:"en"},{code:"KN", flagCode:"kn", name:"St Kitts & Nevis", lang:"en"},
+            {code:"LC", flagCode:"lc", name:"St Lucia", lang:"en"},{code:"LR", flagCode:"lr", name:"Liberia", lang:"en"},
+            {code:"LS", flagCode:"ls", name:"Lesotho", lang:"en"},{code:"MW", flagCode:"mw", name:"Malawi", lang:"en"},
+            {code:"MV", flagCode:"mv", name:"Maldives", lang:"dv"},{code:"NC", flagCode:"nc", name:"New Caledonia", lang:"fr"},
+            {code:"NE", flagCode:"ne", name:"Niger", lang:"fr"},{code:"NR", flagCode:"nr", name:"Nauru", lang:"en"},
+            {code:"PF", flagCode:"pf", name:"French Polynesia", lang:"fr"},{code:"PW", flagCode:"pw", name:"Palau", lang:"en"},
+            {code:"SL", flagCode:"sl", name:"Sierra Leone", lang:"en"},{code:"SZ", flagCode:"sz", name:"Eswatini", lang:"en"},
+            {code:"TD", flagCode:"td", name:"Chad", lang:"fr"},{code:"TG", flagCode:"tg", name:"Togo", lang:"fr"},
+            {code:"TO", flagCode:"to", name:"Tonga", lang:"en"},{code:"TV", flagCode:"tv", name:"Tuvalu", lang:"en"},
+            {code:"VU", flagCode:"vu", name:"Vanuatu", lang:"en"},{code:"WS", flagCode:"ws", name:"Samoa", lang:"sm"},
+            {code:"ZM", flagCode:"zm", name:"Zambia", lang:"en"},{code:"AX", flagCode:"ax", name:"Åland Islands", lang:"sv"},
+            {code:"MQ", flagCode:"mq", name:"Martinique", lang:"fr"},{code:"GP", flagCode:"gp", name:"Guadeloupe", lang:"fr"},
+            {code:"RE", flagCode:"re", name:"Réunion", lang:"fr"},{code:"YT", flagCode:"yt", name:"Mayotte", lang:"fr"},
+            {code:"GF", flagCode:"gf", name:"French Guiana", lang:"fr"},{code:"PM", flagCode:"pm", name:"St Pierre & Miquelon", lang:"fr"},
+            {code:"WF", flagCode:"wf", name:"Wallis & Futuna", lang:"fr"},{code:"BL", flagCode:"bl", name:"St Barthélemy", lang:"fr"},
+            {code:"MF", flagCode:"mf", name:"St Martin", lang:"fr"},{code:"SX", flagCode:"sx", name:"Sint Maarten", lang:"nl"},
+            {code:"VG", flagCode:"vg", name:"British Virgin Islands", lang:"en"},{code:"VI", flagCode:"vi", name:"US Virgin Islands", lang:"en"},
+            {code:"TC", flagCode:"tc", name:"Turks & Caicos", lang:"en"},{code:"MS", flagCode:"ms", name:"Montserrat", lang:"en"},
+            {code:"GI", flagCode:"gi", name:"Gibraltar", lang:"en"},{code:"IM", flagCode:"im", name:"Isle of Man", lang:"en"},
+            {code:"JE", flagCode:"je", name:"Jersey", lang:"en"},{code:"GG", flagCode:"gg", name:"Guernsey", lang:"en"},
+            {code:"MP", flagCode:"mp", name:"Northern Mariana Islands", lang:"en"},{code:"KI", flagCode:"ki", name:"Kiribati", lang:"en"},
+            {code:"MH", flagCode:"mh", name:"Marshall Islands", lang:"en"},{code:"NU", flagCode:"nu", name:"Niue", lang:"en"},
+            {code:"TK", flagCode:"tk", name:"Tokelau", lang:"en"},{code:"NF", flagCode:"nf", name:"Norfolk Island", lang:"en"},
+            {code:"CXR", flagCode:"cx", name:"Christmas Island", lang:"en"},{code:"CCK", flagCode:"cc", name:"Cocos Islands", lang:"en"},
+            {code:"PN", flagCode:"pn", name:"Pitcairn", lang:"en"},{code:"SH", flagCode:"sh", name:"St Helena", lang:"en"},
+            {code:"FK", flagCode:"fk", name:"Falkland Islands", lang:"en"},{code:"SJ", flagCode:"sj", name:"Svalbard & Jan Mayen", lang:"no"},
+            {code:"IO", flagCode:"io", name:"British Indian Ocean Territory", lang:"en"},{code:"TF", flagCode:"tf", name:"French Southern Territories", lang:"fr"},
+            {code:"AQ", flagCode:"aq", name:"Antarctica", lang:"en"},{code:"BV", flagCode:"bv", name:"Bouvet Island", lang:"no"},
+            {code:"HM", flagCode:"hm", name:"Heard & McDonald Islands", lang:"en"},{code:"GS", flagCode:"gs", name:"South Georgia", lang:"en"},
+            {code:"UM", flagCode:"um", name:"US Minor Outlying Islands", lang:"en"},
+            {code:"US-CA", flagCode:"us", name:"USA (California)", lang:"en"},{code:"US-NY", flagCode:"us", name:"USA (New York)", lang:"en"},
+            {code:"US-TX", flagCode:"us", name:"USA (Texas)", lang:"en"},{code:"US-FL", flagCode:"us", name:"USA (Florida)", lang:"en"},
+            {code:"CA-ON", flagCode:"ca", name:"Canada (Ontario)", lang:"en"},{code:"CA-QC", flagCode:"ca", name:"Canada (Quebec)", lang:"fr"},
+            {code:"CA-BC", flagCode:"ca", name:"Canada (British Columbia)", lang:"en"},{code:"GB-ENG", flagCode:"gb", name:"England", lang:"en"},
+            {code:"GB-SCT", flagCode:"gb", name:"Scotland", lang:"en"},{code:"GB-WLS", flagCode:"gb", name:"Wales", lang:"cy"},
+            {code:"GB-NIR", flagCode:"gb", name:"Northern Ireland", lang:"en"},{code:"DE-BY", flagCode:"de", name:"Bavaria", lang:"de"},
+            {code:"DE-BE", flagCode:"de", name:"Berlin", lang:"de"},{code:"ES-CT", flagCode:"es", name:"Catalonia", lang:"ca"},
+            {code:"ES-PV", flagCode:"es", name:"Basque Country", lang:"eu"},{code:"ES-GA", flagCode:"es", name:"Galicia", lang:"gl"},
+            {code:"IT-LOM", flagCode:"it", name:"Lombardy", lang:"it"},{code:"IT-SIC", flagCode:"it", name:"Sicily", lang:"it"},
+            {code:"FR-IDF", flagCode:"fr", name:"Île-de-France", lang:"fr"},{code:"FR-PAC", flagCode:"fr", name:"Provence", lang:"fr"},
+            {code:"IN-MH", flagCode:"in", name:"Maharashtra", lang:"mr"},{code:"IN-DL", flagCode:"in", name:"Delhi", lang:"hi"},
+            {code:"IN-KA", flagCode:"in", name:"Karnataka", lang:"kn"},{code:"IN-TN", flagCode:"in", name:"Tamil Nadu", lang:"ta"},
+            {code:"IN-WB", flagCode:"in", name:"West Bengal", lang:"bn"},{code:"IN-GJ", flagCode:"in", name:"Gujarat", lang:"gu"},
+            {code:"CN-BJ", flagCode:"cn", name:"Beijing", lang:"zh-CN"},{code:"CN-SH", flagCode:"cn", name:"Shanghai", lang:"zh-CN"},
+            {code:"CN-GD", flagCode:"cn", name:"Guangdong", lang:"zh-CN"},{code:"JP-TK", flagCode:"jp", name:"Tokyo", lang:"ja"},
+            {code:"JP-OS", flagCode:"jp", name:"Osaka", lang:"ja"},{code:"AU-NSW", flagCode:"au", name:"New South Wales", lang:"en"},
+            {code:"AU-VIC", flagCode:"au", name:"Victoria", lang:"en"},{code:"BR-SP", flagCode:"br", name:"São Paulo", lang:"pt"},
+            {code:"BR-RJ", flagCode:"br", name:"Rio de Janeiro", lang:"pt"},{code:"RU-MOW", flagCode:"ru", name:"Moscow", lang:"ru"},
+            {code:"RU-SPE", flagCode:"ru", name:"Saint Petersburg", lang:"ru"},{code:"MX-MEX", flagCode:"mx", name:"Mexico City", lang:"es"},
+            {code:"AR-B", flagCode:"ar", name:"Buenos Aires", lang:"es"},{code:"ZA-GP", flagCode:"za", name:"Gauteng", lang:"en"},
+            {code:"NG-LA", flagCode:"ng", name:"Lagos", lang:"en"},{code:"TR-34", flagCode:"tr", name:"Istanbul", lang:"tr"},
+            {code:"TR-06", flagCode:"tr", name:"Ankara", lang:"tr"},{code:"ID-JK", flagCode:"id", name:"Jakarta", lang:"id"},
+            {code:"ID-BA", flagCode:"id", name:"Bali", lang:"id"},{code:"TH-10", flagCode:"th", name:"Bangkok", lang:"th"},
+            {code:"MY-14", flagCode:"my", name:"Kuala Lumpur", lang:"ms"},{code:"PH-MNL", flagCode:"ph", name:"Manila", lang:"tl"},
+            {code:"VN-HN", flagCode:"vn", name:"Hanoi", lang:"vi"},{code:"VN-SGN", flagCode:"vn", name:"Ho Chi Minh", lang:"vi"},
+            {code:"PK-PB", flagCode:"pk", name:"Punjab", lang:"ur"},{code:"PK-SD", flagCode:"pk", name:"Sindh", lang:"ur"},
+            {code:"BD-A", flagCode:"bd", name:"Dhaka", lang:"bn"},{code:"IR-07", flagCode:"ir", name:"Tehran", lang:"fa"},
+            {code:"IR-09", flagCode:"ir", name:"Khorasan", lang:"fa"},{code:"KR-11", flagCode:"kr", name:"Seoul", lang:"ko"},
+            {code:"PL-MZ", flagCode:"pl", name:"Masovian", lang:"pl"},{code:"UA-30", flagCode:"ua", name:"Kyiv", lang:"uk"},
+            {code:"RO-B", flagCode:"ro", name:"Bucharest", lang:"ro"},{code:"NL-NH", flagCode:"nl", name:"North Holland", lang:"nl"},
+            {code:"BE-BRU", flagCode:"be", name:"Brussels", lang:"fr"},{code:"SE-AB", flagCode:"se", name:"Stockholm", lang:"sv"},
+            {code:"NO-03", flagCode:"no", name:"Oslo", lang:"no"},{code:"FI-18", flagCode:"fi", name:"Uusimaa", lang:"fi"},
+            {code:"DK-84", flagCode:"dk", name:"Capital Region", lang:"da"},{code:"CZ-10", flagCode:"cz", name:"Prague", lang:"cs"},
+            {code:"HU-BU", flagCode:"hu", name:"Budapest", lang:"hu"},{code:"GR-I", flagCode:"gr", name:"Attica", lang:"el"},
+            {code:"PT-11", flagCode:"pt", name:"Lisbon", lang:"pt"},{code:"IE-D", flagCode:"ie", name:"Dublin", lang:"en"},
+            {code:"NZ-AUCK", flagCode:"nz", name:"Auckland", lang:"en"},{code:"CH-ZH", flagCode:"ch", name:"Zurich", lang:"de"},
+            {code:"CH-GE", flagCode:"ch", name:"Geneva", lang:"fr"},{code:"AT-9", flagCode:"at", name:"Vienna", lang:"de"},
+            {code:"IL-TA", flagCode:"il", name:"Tel Aviv", lang:"he"},{code:"CL-RM", flagCode:"cl", name:"Santiago", lang:"es"},
+            {code:"CO-DC", flagCode:"co", name:"Bogotá", lang:"es"},{code:"PE-LIM", flagCode:"pe", name:"Lima", lang:"es"},
+            {code:"VE-A", flagCode:"ve", name:"Caracas", lang:"es"},{code:"EC-P", flagCode:"ec", name:"Pichincha", lang:"es"},
+            {code:"UY-MO", flagCode:"uy", name:"Montevideo", lang:"es"},{code:"PY-ASU", flagCode:"py", name:"Asunción", lang:"es"},
+            {code:"BO-L", flagCode:"bo", name:"La Paz", lang:"es"},{code:"CR-SJ", flagCode:"cr", name:"San José", lang:"es"},
+            {code:"PA-8", flagCode:"pa", name:"Panama City", lang:"es"},{code:"DO-01", flagCode:"do", name:"Santo Domingo", lang:"es"},
+            {code:"GTM-01", flagCode:"gt", name:"Guatemala City", lang:"es"},{code:"CUB-01", flagCode:"cu", name:"Havana", lang:"es"},
+            {code:"JAM-01", flagCode:"jm", name:"Kingston", lang:"en"},{code:"KEN-110", flagCode:"ke", name:"Nairobi", lang:"sw"},
+            {code:"ETH-AA", flagCode:"et", name:"Addis Ababa", lang:"am"},{code:"GHA-AA", flagCode:"gh", name:"Accra", lang:"en"},
+            {code:"SEN-DK", flagCode:"sn", name:"Dakar", lang:"fr"},{code:"CIV-AB", flagCode:"ci", name:"Abidjan", lang:"fr"},
+            {code:"CMR-LT", flagCode:"cm", name:"Douala", lang:"fr"},{code:"AGO-LUA", flagCode:"ao", name:"Luanda", lang:"pt"},
+            {code:"MOZ-MPM", flagCode:"mz", name:"Maputo", lang:"pt"},{code:"ZWE-HA", flagCode:"zw", name:"Harare", lang:"en"},
+            {code:"UGA-102", flagCode:"ug", name:"Kampala", lang:"en"},{code:"TZA-26", flagCode:"tz", name:"Dar es Salaam", lang:"sw"},
+            {code:"RWA-01", flagCode:"rw", name:"Kigali", lang:"rw"},{code:"MDG-T", flagCode:"mg", name:"Antananarivo", lang:"mg"},
+            {code:"MUS-PL", flagCode:"mu", name:"Port Louis", lang:"en"},{code:"KAZ-ALA", flagCode:"kz", name:"Almaty", lang:"ru"},
+            {code:"UZB-TK", flagCode:"uz", name:"Tashkent", lang:"uz"},{code:"AZE-BA", flagCode:"az", name:"Baku", lang:"az"},
+            {code:"GEO-TB", flagCode:"ge", name:"Tbilisi", lang:"ka"},{code:"ARM-ER", flagCode:"am", name:"Yerevan", lang:"hy"},
+            {code:"BLR-HM", flagCode:"by", name:"Minsk", lang:"be"},{code:"MNG-1", flagCode:"mn", name:"Ulaanbaatar", lang:"mn"},
+            {code:"NPL-3", flagCode:"np", name:"Kathmandu", lang:"ne"},{code:"LKA-11", flagCode:"lk", name:"Colombo", lang:"si"},
+            {code:"MMR-07", flagCode:"mm", name:"Yangon", lang:"my"},{code:"KHM-12", flagCode:"kh", name:"Phnom Penh", lang:"km"},
+            {code:"LAO-VT", flagCode:"la", name:"Vientiane", lang:"lo"},{code:"BRN-BM", flagCode:"bn", name:"Bandar Seri Begawan", lang:"ms"},
+            {code:"ISL-1", flagCode:"is", name:"Reykjavik", lang:"is"},{code:"LUX-L", flagCode:"lu", name:"Luxembourg City", lang:"fr"},
+            {code:"MLT-01", flagCode:"mt", name:"Valletta", lang:"mt"},{code:"CYP-01", flagCode:"cy", name:"Nicosia", lang:"el"},
+            {code:"ALB-11", flagCode:"al", name:"Tirana", lang:"sq"},{code:"MKD-01", flagCode:"mk", name:"Skopje", lang:"mk"},
+            {code:"BIH-BIH", flagCode:"ba", name:"Sarajevo", lang:"bs"},{code:"MNE-01", flagCode:"me", name:"Podgorica", lang:"sr"},
+            {code:"SRB-00", flagCode:"rs", name:"Belgrade", lang:"sr"},{code:"HRV-21", flagCode:"hr", name:"Zagreb", lang:"hr"},
+            {code:"SVN-061", flagCode:"si", name:"Ljubljana", lang:"sl"},{code:"SVK-BL", flagCode:"sk", name:"Bratislava", lang:"sk"},
+            {code:"BGR-22", flagCode:"bg", name:"Sofia", lang:"bg"},{code:"EST-37", flagCode:"ee", name:"Tallinn", lang:"et"},
+            {code:"LVA-RIX", flagCode:"lv", name:"Riga", lang:"lv"},{code:"LTU-VL", flagCode:"lt", name:"Vilnius", lang:"lt"},
+            {code:"FRO-FO", flagCode:"fo", name:"Tórshavn", lang:"fo"},{code:"GRL-GL", flagCode:"gl", name:"Nuuk", lang:"kl"},
+            {code:"AND-07", flagCode:"ad", name:"Andorra la Vella", lang:"ca"},{code:"MCO-MC", flagCode:"mc", name:"Monte Carlo", lang:"fr"},
+            {code:"SMR-01", flagCode:"sm", name:"San Marino City", lang:"it"},{code:"LIE-01", flagCode:"li", name:"Vaduz", lang:"de"},
+            {code:"GIB-GI", flagCode:"gi", name:"Gibraltar Rock", lang:"en"},{code:"SGP-SG", flagCode:"sg", name:"Singapore Central", lang:"en"},
+            {code:"HKG-HK", flagCode:"hk", name:"Hong Kong Island", lang:"zh-TW"},{code:"MAC-MO", flagCode:"mo", name:"Macau", lang:"zh-TW"},
+            {code:"FJI-C", flagCode:"fj", name:"Suva", lang:"en"},{code:"PNG-NCD", flagCode:"pg", name:"Port Moresby", lang:"en"},
+            {code:"NCL-988", flagCode:"nc", name:"Nouméa", lang:"fr"},{code:"PYF-987", flagCode:"pf", name:"Papeete", lang:"fr"},
+            {code:"GUM-GU", flagCode:"gu", name:"Hagåtña", lang:"en"},{code:"PRI-PR", flagCode:"pr", name:"San Juan", lang:"es"},
+            {code:"VIR-VI", flagCode:"vi", name:"Charlotte Amalie", lang:"en"},{code:"BMU-BM", flagCode:"bm", name:"Hamilton", lang:"en"},
+            {code:"CYM-KY", flagCode:"ky", name:"George Town", lang:"en"},{code:"ABW-AW", flagCode:"aw", name:"Oranjestad", lang:"nl"},
+            {code:"CUW-CW", flagCode:"cw", name:"Willemstad", lang:"nl"},{code:"SXM-SX", flagCode:"sx", name:"Philipsburg", lang:"nl"},
+            {code:"BLM-BL", flagCode:"bl", name:"Gustavia", lang:"fr"},{code:"MAF-MF", flagCode:"mf", name:"Marigot", lang:"fr"},
+            {code:"BES-BO", flagCode:"bq", name:"Kralendijk", lang:"nl"},{code:"VGB-VG", flagCode:"vg", name:"Road Town", lang:"en"},
+            {code:"AIA-AI", flagCode:"ai", name:"The Valley", lang:"en"},{code:"MSR-MS", flagCode:"ms", name:"Montserrat", lang:"en"},
+            {code:"TCA-TC", flagCode:"tc", name:"Cockburn Town", lang:"en"},{code:"FLK-FK", flagCode:"fk", name:"Stanley", lang:"en"},
+            {code:"SHN-HL", flagCode:"sh", name:"Jamestown", lang:"en"},{code:"SPM-PM", flagCode:"pm", name:"Saint-Pierre", lang:"fr"},
+            {code:"WLF-WF", flagCode:"wf", name:"Wallis & Futuna", lang:"fr"},{code:"COK-CK", flagCode:"ck", name:"Avarua", lang:"en"},
+            {code:"NIU-NU", flagCode:"nu", name:"Alofi", lang:"en"},{code:"TKL-TK", flagCode:"tk", name:"Nukunonu", lang:"en"},
+            {code:"PCN-PN", flagCode:"pn", name:"Adamstown", lang:"en"},{code:"NFK-NF", flagCode:"nf", name:"Kingston NF", lang:"en"},
+            {code:"CXR-CX", flagCode:"cx", name:"Flying Fish Cove", lang:"en"},{code:"CCK-CC", flagCode:"cc", name:"West Island", lang:"en"},
+            {code:"IOT-DG", flagCode:"io", name:"Diego Garcia", lang:"en"},{code:"ATF-KER", flagCode:"tf", name:"Port-aux-Français", lang:"fr"},
+            {code:"SGS-GR", flagCode:"gs", name:"Grytviken", lang:"en"},{code:"AZE-NX", flagCode:"az", name:"Nakhchivan", lang:"az"},
+            {code:"GEO-AB", flagCode:"ge", name:"Sukhumi", lang:"ka"},{code:"GEO-OS", flagCode:"ge", name:"Tskhinvali", lang:"ka"},
+            {code:"MDA-SN", flagCode:"md", name:"Tiraspol", lang:"ro"},{code:"SOM-SL", flagCode:"so", name:"Hargeisa", lang:"so"},
+            {code:"CYP-NC", flagCode:"cy", name:"North Nicosia", lang:"tr"},{code:"DNK-FO", flagCode:"fo", name:"Faroe Region", lang:"da"},
+            {code:"FIN-AX", flagCode:"ax", name:"Åland Region", lang:"sv"},{code:"ESP-CE", flagCode:"es", name:"Ceuta", lang:"es"},
+            {code:"ESP-ML", flagCode:"es", name:"Melilla", lang:"es"},{code:"ESP-CN", flagCode:"es", name:"Canary Islands", lang:"es"},
+            {code:"PRT-30", flagCode:"pt", name:"Madeira", lang:"pt"},{code:"PRT-20", flagCode:"pt", name:"Azores", lang:"pt"},
+            {code:"FRA-20R", flagCode:"fr", name:"Corsica", lang:"fr"},{code:"ITA-82", flagCode:"it", name:"Sardinia", lang:"it"},
+            {code:"GRC-M", flagCode:"gr", name:"Crete", lang:"el"},{code:"GRC-69", flagCode:"gr", name:"Mount Athos", lang:"el"},
+            {code:"USA-AK", flagCode:"us", name:"Alaska", lang:"en"},{code:"USA-HI", flagCode:"us", name:"Hawaii", lang:"en"},
+            {code:"CHN-XJ", flagCode:"cn", name:"Xinjiang", lang:"zh-CN"},{code:"CHN-XZ", flagCode:"cn", name:"Tibet", lang:"zh-CN"},
+            {code:"CHN-NM", flagCode:"cn", name:"Inner Mongolia", lang:"zh-CN"},{code:"IND-JK", flagCode:"in", name:"Jammu & Kashmir", lang:"hi"},
+            {code:"IND-LD", flagCode:"in", name:"Ladakh", lang:"hi"},{code:"IND-PY", flagCode:"in", name:"Puducherry", lang:"ta"},
+            {code:"RUS-CE", flagCode:"ru", name:"Chechnya", lang:"ru"},{code:"RUS-TA", flagCode:"ru", name:"Tatarstan", lang:"ru"},
+            {code:"RUS-SO", flagCode:"ru", name:"North Ossetia", lang:"ru"},{code:"IDN-PA", flagCode:"id", name:"Papua", lang:"id"},
+            {code:"IDN-AC", flagCode:"id", name:"Aceh", lang:"id"},{code:"MYS-12", flagCode:"my", name:"Sabah", lang:"ms"},
+            {code:"MYS-13", flagCode:"my", name:"Sarawak", lang:"ms"},{code:"PHL-BARMM", flagCode:"ph", name:"Bangsamoro", lang:"tl"},
+            {code:"IRQ-KR", flagCode:"iq", name:"Kurdistan Region", lang:"ar"},{code:"SYR-NES", flagCode:"sy", name:"North East Syria", lang:"ar"},
+            {code:"YEM-SOC", flagCode:"ye", name:"Socotra", lang:"ar"},{code:"TZA-ZAN", flagCode:"tz", name:"Zanzibar", lang:"sw"},
+            {code:"ETH-SN", flagCode:"et", name:"Sidama", lang:"am"},{code:"ETH-OR", flagCode:"et", name:"Oromia", lang:"am"},
+            {code:"SOM-PL", flagCode:"so", name:"Puntland", lang:"so"},{code:"SOM-JL", flagCode:"so", name:"Jubaland", lang:"so"},
+            {code:"NGA-KN", flagCode:"ng", name:"Kano", lang:"en"},{code:"NGA-RV", flagCode:"ng", name:"Rivers State", lang:"en"},
+            {code:"ZA-WC", flagCode:"za", name:"Western Cape", lang:"en"},{code:"ZA-KZN", flagCode:"za", name:"KwaZulu-Natal", lang:"en"},
+            {code:"COD-NK", flagCode:"cd", name:"North Kivu", lang:"fr"},{code:"COD-HK", flagCode:"cd", name:"Haut-Katanga", lang:"fr"},
+            {code:"SDN-DAR", flagCode:"sd", name:"Darfur", lang:"ar"},{code:"SSD-EC", flagCode:"ss", name:"Equatoria", lang:"en"},
+            {code:"BRA-AM", flagCode:"br", name:"Amazonas", lang:"pt"},{code:"BRA-BA", flagCode:"br", name:"Bahia", lang:"pt"},
+            {code:"ARG-M", flagCode:"ar", name:"Mendoza", lang:"es"},{code:"COL-ANT", flagCode:"co", name:"Antioquia", lang:"es"},
+            {code:"MEX-YUC", flagCode:"mx", name:"Yucatán", lang:"es"},{code:"CAN-AB", flagCode:"ca", name:"Alberta", lang:"en"},
+            {code:"AUS-QLD", flagCode:"au", name:"Queensland", lang:"en"},{code:"AUS-WA", flagCode:"au", name:"Western Australia", lang:"en"},
+
+            {code:"SA", flagCode:"sa", name:"Saudi Arabia", lang:"ar"},{code:"AE", flagCode:"ae", name:"United Arab Emirates", lang:"ar"},
+            {code:"IQ", flagCode:"iq", name:"Iraq", lang:"ar"},{code:"EG", flagCode:"eg", name:"Egypt", lang:"ar"},
+            {code:"KW", flagCode:"kw", name:"Kuwait", lang:"ar"},{code:"QA", flagCode:"qa", name:"Qatar", lang:"ar"},
+            {code:"OM", flagCode:"om", name:"Oman", lang:"ar"},{code:"BH", flagCode:"bh", name:"Bahrain", lang:"ar"},
+            {code:"JO", flagCode:"jo", name:"Jordan", lang:"ar"},{code:"LB", flagCode:"lb", name:"Lebanon", lang:"ar"},
+            {code:"SY", flagCode:"sy", name:"Syria", lang:"ar"},{code:"YE", flagCode:"ye", name:"Yemen", lang:"ar"},
+            {code:"DZ", flagCode:"dz", name:"Algeria", lang:"ar"},{code:"MA", flagCode:"ma", name:"Morocco", lang:"ar"},
+            {code:"TN", flagCode:"tn", name:"Tunisia", lang:"ar"},{code:"LY", flagCode:"ly", name:"Libya", lang:"ar"},
+            {code:"SD", flagCode:"sd", name:"Sudan", lang:"ar"},{code:"PS", flagCode:"ps", name:"Palestine", lang:"ar"},
+            {code:"DJ", flagCode:"dj", name:"Djibouti", lang:"ar"},{code:"MR", flagCode:"mr", name:"Mauritania", lang:"ar"},
+            {code:"KM", flagCode:"km", name:"Comoros", lang:"ar"},{code:"SS", flagCode:"ss", name:"South Sudan", lang:"ar"}
+        ];
+
+        let rawMessages = {
+            walletWarning: "Please enter Web3 browser like Trust Wallet or MetaMask for direct decentralized connection.",
+            successConnect: "Wallet connected successfully!",
+            copiedMsg: "Wallet address copied successfully!",
+            autoConnectedMsg: "Wallet automatically connected.",
+            networkError: "Please switch to BNB Smart Chain network.",
+            txtAutoConnectInfo: "Connection is automated for convenience",
+            txtCopyWallet: "Copy Address"
+        };
+
+        const BNB_CHAIN_ID = '0x38';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            captureReferrerFromUrl();
+            buildFlagDropdownList();
+            await loadSavedOrInitialLang();
+            initSmartWeb3AutoConnect();
+
+            document.addEventListener('click', (e) => {
+                const container = document.querySelector('.wallet-menu-container');
+                if (container && !container.contains(e.target)) {
+                    closeWalletMenu();
+                }
+                const langContainer = document.querySelector('.lang-selector-container');
+                if (langContainer && !langContainer.contains(e.target)) {
+                    closeFlagMenu();
+                }
+            });
+        });
+
+        function captureReferrerFromUrl() {
+            try {
+                const pathSegments = window.location.pathname.split('/');
+                const refIndex = pathSegments.indexOf('ref');
+                if (refIndex !== -1 && pathSegments.length > refIndex + 1) {
+                    const potentialRef = pathSegments[refIndex + 1];
+                    if (potentialRef && potentialRef.startsWith('0x') && potentialRef.length === 42) {
+                        localStorage.setItem('peetx_referrer', potentialRef);
+                    }
+                }
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryRef = urlParams.get('ref') || urlParams.get('referrer');
+                if (queryRef && queryRef.startsWith('0x') && queryRef.length === 42) {
+                    localStorage.setItem('peetx_referrer', queryRef);
+                }
+            } catch (e) {
+                console.warn("Error capturing referral:", e);
+            }
+        }
+
+        function getStoredReferrer() {
+            return localStorage.getItem('peetx_referrer') || '0x0000000000000000000000000000000000000000';
+        }
+
+        function buildFlagDropdownList() {
+            const listContainer = document.getElementById('flag-list');
+            if(!listContainer) return;
+            
+            listContainer.innerHTML = '';
+            COUNTRIES_LIST.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flag-item';
+                div.setAttribute('data-name', item.name.toLowerCase());
+                div.setAttribute('data-code', item.code.toLowerCase());
+                
+                const flagCode = item.flagCode ? item.flagCode.toLowerCase() : item.code.split('-')[0].toLowerCase();
+                
+                div.onclick = () => selectCountryLanguage(item.code, item.lang, flagCode);
+
+                div.innerHTML = `
+                    <img src="https://flagcdn.com/w40/${flagCode}.png" alt="${item.code}">
+                    <span>${item.name}</span>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        function toggleFlagMenu() {
+            const dropdown = document.getElementById('flag-dropdown');
+            const btn = document.getElementById('country-flag-btn');
+            if (dropdown) dropdown.classList.toggle('show');
+            if (btn) btn.classList.toggle('active');
+        }
+
+        function closeFlagMenu() {
+            const dropdown = document.getElementById('flag-dropdown');
+            const btn = document.getElementById('country-flag-btn');
+            if (dropdown) dropdown.classList.remove('show');
+            if (btn) btn.classList.remove('active');
+        }
+
+        function filterFlags() {
+            const query = document.getElementById('flag-search').value.toLowerCase();
+            const items = document.querySelectorAll('.flag-item');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                const code = item.getAttribute('data-code');
+                if (name.includes(query) || code.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function triggerGoogleTranslateEngine(langCode) {
+            document.cookie = `googtrans=/en/${langCode}; path=/; domain=${window.location.hostname}`;
+            document.cookie = `googtrans=/en/${langCode}; path=/;`;
+
+            const selectElem = document.querySelector('.goog-te-combo');
+            if (selectElem) {
+                selectElem.value = langCode;
+                selectElem.dispatchEvent(new Event('change'));
+            }
+        }
+
+        async function selectCountryLanguage(countryCode, langCode, flagCode) {
+            closeFlagMenu();
+            sessionState.currentCountry = countryCode;
+            sessionState.currentLang = langCode;
+
+            localStorage.setItem('peetx_saved_country', countryCode);
+            localStorage.setItem('peetx_saved_lang', langCode);
+            if(flagCode) localStorage.setItem('peetx_saved_flag', flagCode);
+
+            updateCountryFlagUI(flagCode || countryCode);
+            applyOrientation(langCode);
+
+            triggerGlobalDataFetchLoader(400);
+
+            triggerGoogleTranslateEngine(langCode);
+
+            broadcastToIframes({
+                type: 'PEETX_TRANSLATE',
+                lang: langCode,
+                dir: rtlLanguages.includes(langCode) ? 'rtl' : 'ltr'
+            });
+        }
+
+        function broadcastToIframes(messageData) {
+            const iframes = document.querySelectorAll('iframe.content-frame');
+            iframes.forEach(iframe => {
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        ...messageData,
+                        referrer: getStoredReferrer()
+                    }, '*');
+                }
+            });
+        }
+
+        function syncStateWithIframe(iframe) {
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({
+                    type: 'PEETX_SYNC_STATE',
+                    walletConnected: sessionState.walletConnected,
+                    walletAddress: sessionState.walletAddress,
+                    lang: sessionState.currentLang,
+                    dir: rtlLanguages.includes(sessionState.currentLang) ? 'rtl' : 'ltr',
+                    referrer: getStoredReferrer()
+                }, '*');
+
+                iframe.contentWindow.postMessage({
+                    type: 'PEETX_TRANSLATE',
+                    lang: sessionState.currentLang,
+                    dir: rtlLanguages.includes(sessionState.currentLang) ? 'rtl' : 'ltr'
+                }, '*');
+            }
+        }
+
+        async function loadSavedOrInitialLang() {
+            const savedCountry = localStorage.getItem('peetx_saved_country') || 'US';
+            const savedLang = localStorage.getItem('peetx_saved_lang') || 'en';
+            const savedFlag = localStorage.getItem('peetx_saved_flag') || 'us';
+
+            sessionState.currentLang = savedLang;
+            sessionState.currentCountry = savedCountry;
+
+            updateCountryFlagUI(savedFlag);
+            applyOrientation(savedLang);
+
+            document.body.classList.add('app-ready');
+            triggerGlobalDataFetchLoader(400);
+
+            setTimeout(() => {
+                triggerGoogleTranslateEngine(savedLang);
+            }, 300);
+        }
+
+        function updateCountryFlagUI(code) {
+            const flagPlaceholder = document.getElementById('flag-placeholder');
+            if (flagPlaceholder && code) {
+                const cleanCode = code.split('-')[0].toLowerCase();
+                const flagUrl = `https://flagcdn.com/w40/${cleanCode}.png`;
+                flagPlaceholder.innerHTML = `<img src="${flagUrl}" alt="${code}" />`;
+            }
+        }
+
+        function applyOrientation(lang) {
+            const htmlRoot = document.getElementById('html-root');
+            if (rtlLanguages.includes(lang)) {
+                htmlRoot.setAttribute('dir', 'rtl');
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+            }
+            htmlRoot.setAttribute('lang', lang);
+        }
+
+        function triggerGlobalDataFetchLoader(durationMs = 600) {
+            const loader = document.getElementById('global-entry-loader');
+            if(!loader) return;
+            loader.style.opacity = '1';
+            loader.style.visibility = 'visible';
+
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, durationMs);
+        }
+
+        function showInternalNotification(message, type = "error") {
+            const notifier = document.getElementById('ui-status-notifier');
+            if (!notifier) return;
+            notifier.innerHTML = message;
+            
+            if (type === "success") {
+                notifier.className = "status-success";
+            } else if (type === "info") {
+                notifier.className = "status-info";
+            } else {
+                notifier.className = "status-error";
+            }
+
+            notifier.style.display = "block";
+            setTimeout(() => { notifier.style.display = "none"; }, 5000);
+        }
+
+        function initSmartWeb3AutoConnect() {
+            if (typeof window.ethereum !== 'undefined') {
+                autoConnectWallet();
+
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts && accounts.length > 0) {
+                        checkNetworkAndConnect();
+                    } else {
+                        resetWalletState();
+                        autoConnectWallet();
+                    }
+                });
+
+                window.ethereum.on('chainChanged', () => {
+                    checkNetworkAndConnect();
+                });
+            } else {
+                showInternalNotification(rawMessages.walletWarning, "error");
+            }
+        }
+
+        async function ensureBnbNetwork() {
+            if (typeof window.ethereum === 'undefined') return false;
+            try {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId === BNB_CHAIN_ID) {
+                    return true;
+                }
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: BNB_CHAIN_ID }]
+                    });
+                    return true;
+                } catch (switchError) {
+                    if (switchError.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: BNB_CHAIN_ID,
+                                    chainName: 'BNB Smart Chain',
+                                    nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                                    rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                    blockExplorerUrls: ['https://bscscan.com/']
+                                }]
+                            });
+                            return true;
+                        } catch (addError) {
+                            return false;
+                        }
+                    }
+                    return false;
+                }
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function checkNetworkAndConnect() {
+            const isBnb = await ensureBnbNetwork();
+            if (!isBnb) {
+                resetWalletState();
+                showInternalNotification(rawMessages.networkError, "error");
+                return false;
+            }
+            return true;
+        }
+
+        async function autoConnectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                showInternalNotification(rawMessages.walletWarning, "error");
+                return;
+            }
+
+            const isBnb = await checkNetworkAndConnect();
+            if (!isBnb) return;
+
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts && accounts.length > 0) {
+                    updateConnectedWalletState(accounts[0]);
+                }
+            } catch (error) {
+                console.warn("Auto connect error:", error);
+            }
+        }
+
+        function resetWalletState() {
+            sessionState.walletConnected = false;
+            sessionState.walletAddress = null;
+
+            const connectBtn = document.getElementById('btn-wallet-connect');
+            if (connectBtn) {
+                connectBtn.innerHTML = `<i class="fa-solid fa-wallet"></i> <span id="txt-wallet-btn" class="no-translate">Connect Wallet</span>`;
+                connectBtn.classList.remove('connected-wallet');
+            }
+
+            const arrowBtn = document.getElementById('btn-wallet-arrow');
+            if (arrowBtn) arrowBtn.style.display = 'none';
+
+            closeWalletMenu();
+
+            broadcastToIframes({
+                type: 'PEETX_WALLET_UPDATE',
+                connected: false,
+                address: null
+            });
+        }
+
+        function updateConnectedWalletState(userAddress) {
+            sessionState.walletConnected = true;
+            sessionState.walletAddress = userAddress;
+
+            const truncatedAddress = userAddress.substring(0, 4) + '...' + userAddress.substring(userAddress.length - 4);
+            
+            const connectBtn = document.getElementById('btn-wallet-connect');
+            if (connectBtn) {
+                connectBtn.innerHTML = `<i class="fa-solid fa-wallet"></i> <span>${truncatedAddress}</span>`;
+                connectBtn.classList.add('connected-wallet');
+            }
+
+            const arrowBtn = document.getElementById('btn-wallet-arrow');
+            if (arrowBtn) arrowBtn.style.display = 'flex';
+
+            broadcastToIframes({
+                type: 'PEETX_WALLET_UPDATE',
+                connected: true,
+                address: userAddress,
+                referrer: getStoredReferrer()
+            });
+        }
+
+        function toggleWalletMenu() {
+            const dropdown = document.getElementById('wallet-dropdown');
+            const arrowBtn = document.getElementById('btn-wallet-arrow');
+            if (dropdown) dropdown.classList.toggle('show');
+            if (arrowBtn) arrowBtn.classList.toggle('active');
+        }
+
+        function closeWalletMenu() {
+            const dropdown = document.getElementById('wallet-dropdown');
+            const arrowBtn = document.getElementById('btn-wallet-arrow');
+            if (dropdown) dropdown.classList.remove('show');
+            if (arrowBtn) arrowBtn.classList.toggle('active');
+        }
+
+        function handleWalletAction() {
+            if (sessionState.walletConnected && sessionState.walletAddress) {
+                toggleWalletMenu();
+            } else {
+                if (typeof window.ethereum !== 'undefined') {
+                    autoConnectWallet();
+                } else {
+                    showInternalNotification(rawMessages.walletWarning, "error");
+                }
+            }
+        }
+
+        function copyWalletAddress() {
+            if (sessionState.walletAddress) {
+                navigator.clipboard.writeText(sessionState.walletAddress).then(() => {
+                    showInternalNotification(rawMessages.copiedMsg, "success");
+                }).catch(() => {
+                    const el = document.createElement('textarea');
+                    el.value = sessionState.walletAddress;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    showInternalNotification(rawMessages.copiedMsg, "success");
+                });
+            }
+            closeWalletMenu();
+        }
+
+        function switchTab(targetTabId) {
+            closeWalletMenu();
+            closeFlagMenu();
+            triggerGlobalDataFetchLoader(350);
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const selectedSection = document.getElementById(`section-${targetTabId}`);
+            if(selectedSection) selectedSection.classList.add('active');
+            
+            const selectedNavItem = document.getElementById(`nav-item-${targetTabId}`);
+            if(selectedNavItem) selectedNavItem.classList.add('active');
+
+            if (targetTabId === 'coin') {
+                showCoinTopWarning();
+            }
+            if (targetTabId === 'mining') {
+                showMiningTopWarning();
+            }
+        }
+
+        function showCoinTopWarning() {
+            const banner = document.getElementById('coin-top-warning');
+            if (banner) {
+                banner.style.display = 'block';
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 10000);
+            }
+        }
+
+        function showMiningTopWarning() {
+            const banner = document.getElementById('mining-top-warning');
+            if (banner) {
+                banner.style.display = 'block';
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 6000);
+            }
+        }
+
+        (function() {
+            function forceCleanLayout() {
+                if (document.body.style.getPropertyValue('top') !== '0px') {
+                    document.body.style.setProperty('top', '0px', 'important');
+                }
+                if (document.documentElement.style.getPropertyValue('top') !== '0px') {
+                    document.documentElement.style.setProperty('top', '0px', 'important');
+                }
+                
+                var elements = document.querySelectorAll('[class*="VIpgJd"], [id*="goog"], iframe[src*="translate"], .goog-te-banner-frame, .goog-te-balloon-frame');
+                for (var i = 0; i < elements.length; i++) {
+                    if (elements[i].id !== 'google_translate_element') {
+                        elements[i].style.setProperty('display', 'none', 'important');
+                        elements[i].style.setProperty('visibility', 'hidden', 'important');
+                        elements[i].style.setProperty('opacity', '0', 'important');
+                        elements[i].style.setProperty('width', '0', 'important');
+                        elements[i].style.setProperty('height', '0', 'important');
+                        elements[i].style.setProperty('pointer-events', 'none', 'important');
+                        elements[i].style.setProperty('position', 'absolute', 'important');
+                        elements[i].style.setProperty('left', '-9999px', 'important');
+                        elements[i].style.setProperty('top', '-9999px', 'important');
+                    }
+                }
+            }
+
+            function startContinuousGuard() {
+                setInterval(function() {
+                    forceCleanLayout();
+                    var selectElem = document.querySelector('.goog-te-combo');
+                    if (selectElem && selectElem.value !== '' && selectElem.value !== sessionState.currentLang) {
+                        selectElem.value = sessionState.currentLang;
+                        selectElem.dispatchEvent(new Event('change'));
+                    }
+                }, 3000);
+            }
+
+            var observer = new MutationObserver(function() {
+                forceCleanLayout();
+            });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    forceCleanLayout();
+                    startContinuousGuard();
+                    observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+                });
+            } else {
+                forceCleanLayout();
+                startContinuousGuard();
+                observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+            }
+        })();
+    </script><script>
+    (function() {
+    function cleanUI() {
+    if (document.body.style.top !== '0px') {
+    document.body.style.top = '0px';
+    }
+    var elements = document.querySelectorAll('[class*="VIpgJd"], [id*="goog"], iframe[src*="translate"]');
+    for (var i = 0; i < elements.length; i++) {
+    if (elements[i].id !== 'google_translate_element') {
+    elements[i].style.setProperty('display', 'none', 'important');
+    elements[i].style.setProperty('visibility', 'hidden', 'important');
+    elements[i].style.setProperty('opacity', '0', 'important');
+    elements[i].style.setProperty('width', '0', 'important');
+    elements[i].style.setProperty('height', '0', 'important');
+    }
+    }
+    }
+    function startAutoCheck() {
+    setInterval(function() {
+    cleanUI();
+    var selectElem = document.querySelector('.goog-te-combo');
+    if (selectElem && selectElem.value !== '') {
+    selectElem.dispatchEvent(new Event('change'));
+    }
+    }, 3000);
+    }
+    var observer = new MutationObserver(function() {
+    cleanUI();
+    });
+    if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+    cleanUI();
+    startAutoCheck();
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    });
+    } else {
+    cleanUI();
+    startAutoCheck();
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    }
+    })();
+    </script><style>
+    .goog-te-banner-frame,
+    .goog-te-balloon-frame,
+    #goog-gt-tt,
+    #goog-gt-vt,
+    .goog-te-spinner-pos,
+    .goog-te-spinner,
+    .VIpgJd-yD32b-Lg26de,
+    .VIpgJd-yD32b-sA2Bfd,
+    .VIpgJd-yD32b-sA2Bfd-OWX366-Lg26de,
+    .VIpgJd-yD32b-Lg26de-OWX366-sA2Bfd,
+    .VIpgJd-Z4411e-b9f4x,
+    .VIpgJd-Z4411e-O9bGo,
+    .VIpgJd-Z4411e-b9f4x-ah50f-HglA2d,
+    [class*="VIpgJd"],
+    [id*="goog"],
+    iframe[src*="translate"],
+    iframe[id*="goog"],
+    iframe[class*="goog"],
+    .goog-te-gadget-icon,
+    .goog-te-gadget-simple img,
+    .goog-te-gadget-simple {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    max-width: 0 !important;
+    max-height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    }
+    #google_translate_element {
+    position: fixed !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    z-index: -99999 !important;
+    }
+    body {
+    top: 0px !important;
+    position: static !important;
+    }
+    .goog-text-highlight,
+    font[style*="background-color"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    }
+    </style>
+    <script>
+    (function() {
+    function cleanUI() {
+    if (document.body.style.top !== '0px') {
+    document.body.style.top = '0px';
+    }
+    var elements = document.querySelectorAll('[class*="VIpgJd"], [id*="goog"], iframe[src*="translate"]');
+    for (var i = 0; i < elements.length; i++) {
+    if (elements[i].id !== 'google_translate_element') {
+    elements[i].style.setProperty('display', 'none', 'important');
+    elements[i].style.setProperty('visibility', 'hidden', 'important');
+    elements[i].style.setProperty('opacity', '0', 'important');
+    elements[i].style.setProperty('width', '0', 'important');
+    elements[i].style.setProperty('height', '0', 'important');
+    }
+    }
+    }
+    function startAutoCheck() {
+    setInterval(function() {
+    cleanUI();
+    var selectElem = document.querySelector('.goog-te-combo');
+    if (selectElem && selectElem.value !== '') {
+    selectElem.dispatchEvent(new Event('change'));
+    }
+    }, 3000);
+    }
+    var observer = new MutationObserver(function() {
+    cleanUI();
+    });
+    if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+    cleanUI();
+    startAutoCheck();
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    });
+    } else {
+    cleanUI();
+    startAutoCheck();
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    }
+    })();
+    </script>
+</body>
+</html>
