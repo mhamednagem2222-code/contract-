@@ -1,0 +1,14 @@
+{
+  "name": "peetx-bot",
+  "version": "1.0.0",
+  "description": "PeetX Telegram Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0",
+    "express": "^4.19.2",
+    "telegraf": "^4.16.3"
+  }
+}
